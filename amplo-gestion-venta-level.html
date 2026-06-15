@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)file:///C:/Users/cristobal.meza/Downloads/AMPLO_escenarios_32.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>AMPLO — Gestión de Venta | LEVEL</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --o:#ff9800;--od:#e67e00;--ol:#fff8ee;
+  --n:#1d428a;--nd:#15336b;
+  --g1:#f5f6f8;--g2:#eaecf0;--g3:#d8dce4;--g4:#9aa0ab;--g6:#565c68;--g7:#383d45;--g9:#16181c;
+  --gr:#2e7d32;--re:#c62828;
+  --cons:#e67e00;--reg:#1d428a;--opt:#2e7d32;
+  --f:"Open Sans",sans-serif;
+  --r:11px;--sh:0 1px 3px rgba(20,30,55,.07),0 4px 16px rgba(20,30,55,.06);
+}
+body{font-family:var(--f);background:var(--g1);color:var(--g9);font-size:13px;line-height:1.5}
+.hdr{background:var(--nd);padding:0 48px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.28)}
+.brand{font-size:24px;font-weight:800;color:var(--o);letter-spacing:.05em}
+.hdr-r{text-align:right}
+.hdr-t{font-size:13px;font-weight:700;color:#fff}
+.hdr-s{font-size:11px;color:rgba(255,255,255,.48);margin-top:1px}
+.wrap{padding:30px 48px 64px;max-width:1340px;margin:0 auto}
+.toprow{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:26px}
+.toprow h1{font-size:18px;font-weight:700;color:var(--g9);letter-spacing:-.01em}
+.toprow p{font-size:12px;color:var(--g4);margin-top:2px}
+.sc-seg{display:flex;background:var(--g2);padding:4px;border-radius:9px;gap:4px}
+.sctab{padding:9px 24px;border-radius:6px;border:none;background:transparent;font-family:var(--f);font-size:12.5px;font-weight:700;cursor:pointer;color:var(--g6);transition:all .17s}
+.sctab:hover{color:var(--g9)}
+.sctab.on.cons{background:var(--cons);color:#fff;box-shadow:0 2px 8px rgba(230,126,0,.38)}
+.sctab.on.reg{background:var(--reg);color:#fff;box-shadow:0 2px 8px rgba(29,66,138,.38)}
+.sctab.on.opt{background:var(--opt);color:#fff;box-shadow:0 2px 8px rgba(46,125,50,.38)}
+.hero{border-radius:var(--r);padding:22px 28px;margin-bottom:32px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:0;color:#fff;overflow:hidden;position:relative}
+.hero.cons{background:linear-gradient(110deg,#c96800 0%,#ff9800 100%)}
+.hero.reg{background:linear-gradient(110deg,#0f2a5c 0%,#2a56b0 100%)}
+.hero.opt{background:linear-gradient(110deg,#1a4d1d 0%,#3da344 100%)}
+.hero::before{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-main{padding-right:24px;border-right:1px solid rgba(255,255,255,.2)}
+.hero-esc{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;opacity:.75;margin-bottom:6px}
+.hero-uf{font-size:11px;opacity:.8;font-weight:600;margin-bottom:2px}
+.hero-val{font-size:40px;font-weight:800;line-height:1;letter-spacing:-.03em}
+.hero-sub{font-size:11px;opacity:.7;margin-top:6px}
+.hero-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 12px;border-right:1px solid rgba(255,255,255,.15)}
+.hero-stat:last-child{border-right:none}
+.hs-v{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.hs-l{font-size:10px;text-transform:uppercase;letter-spacing:.07em;opacity:.72;font-weight:600;margin-top:5px;text-align:center}
+.sec{margin-bottom:32px}
+.sec-hdr{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.sec-num{width:22px;height:22px;border-radius:50%;background:var(--n);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-title{font-size:13.5px;font-weight:700;color:var(--g7)}
+.sec-sub{font-size:11px;color:var(--g4);margin-left:4px;font-weight:400}
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--g2);overflow:hidden}
+.card-hdr{padding:12px 18px;border-bottom:1px solid var(--g2);background:var(--g1)}
+.ctitle{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--g4);font-weight:700}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g2 .card{display:flex;flex-direction:column}
+.g2 .card .dt{flex:1}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g13{display:grid;grid-template-columns:1fr 3fr;gap:18px;align-items:start}
+.cbox{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:2px solid var(--g2);overflow:hidden;transition:border-color .2s}
+.cbox.sel.cons{border-color:var(--cons)}.cbox.sel.reg{border-color:var(--reg)}.cbox.sel.opt{border-color:var(--opt)}
+.cbox-hdr{padding:12px 18px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#fff;display:flex;justify-content:space-between}
+.cbox-hdr.cons{background:var(--cons)}.cbox-hdr.reg{background:var(--reg)}.cbox-hdr.opt{background:var(--opt)}
+.cbox-hdr em{font-style:normal;font-size:9px;background:rgba(255,255,255,.2);padding:2px 7px;border-radius:10px}
+.crow{display:flex;justify-content:space-between;align-items:baseline;padding:9px 18px;border-bottom:1px solid var(--g2);font-size:12px}
+.crow:last-child{border-bottom:none}
+.cl{color:var(--g6);font-weight:600}
+.cv{font-weight:700;color:var(--g9);text-align:right}
+.cv.big{font-size:16px;color:var(--n)}.cv.or{color:var(--od)}.cv.gr{color:var(--gr)}
+.crow.hl{background:var(--ol)}
+.dt{width:100%;border-collapse:collapse}
+.dt thead th{background:var(--nd);color:#fff;padding:10px 16px;text-align:right;font-size:10.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+.dt thead th:first-child{text-align:left}
+.dt tbody td{padding:11px 16px;border-bottom:1px solid var(--g2);text-align:right;font-size:13px;color:var(--g7);white-space:nowrap}
+.dt tbody td:first-child{text-align:left;font-weight:700;color:var(--g9)}
+.dt tbody tr:hover td{background:var(--g1)}
+.dt tbody tr.tot td{background:var(--ol);font-weight:800;color:var(--n);border-bottom:none}
+.dt tbody tr.sp td{border-bottom:1px solid var(--g2)}
+.dt tbody tr.sp:hover td{background:transparent}
+.or{color:var(--od);font-weight:700}.gr{color:var(--gr)}.mu{color:var(--g4)}
+.ctr{text-align:center!important}
+.cap-hero{border-radius:var(--r);padding:28px 22px;text-align:center;margin-bottom:14px;color:#fff}
+.cap-hero.cons{background:linear-gradient(135deg,#c96800,var(--cons))}
+.cap-hero.reg{background:linear-gradient(135deg,var(--nd),var(--reg))}
+.cap-hero.opt{background:linear-gradient(135deg,#1a4d1d,var(--opt))}
+.ch-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;opacity:.78;margin-bottom:8px}
+.ch-uf{font-size:14px;font-weight:600;opacity:.85}
+.ch-val{font-size:42px;font-weight:800;line-height:1;letter-spacing:-.03em;color:var(--o)}
+.ch-sub{font-size:11px;opacity:.55;margin-top:7px}
+.info-card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--g2);padding:0 18px}
+.ic-title{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--g4);font-weight:700;padding:14px 0 6px}
+.bdr{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--g2);font-size:12.5px}
+.bdr:last-child{border-bottom:none}
+.bdl{color:var(--g6);font-weight:600}.bdv{font-weight:700;color:var(--n)}.bdv.or{color:var(--od)}
+.note{font-size:11px;color:var(--g4);padding:12px 0;border-top:1px solid var(--g2);line-height:1.6;margin-top:4px}
+.ftr{background:var(--nd);color:rgba(255,255,255,.38);font-size:11px;padding:15px 48px;text-align:center;margin-top:50px}
+.ftr span{color:var(--o);font-weight:700}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <span class="brand">LEVEL</span>
+  <div class="hdr-r">
+    <div class="hdr-t">Edificio AMPLO - Coronel Souper</div>
+    <div class="hdr-s">modelo de gestión de venta · 2026</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="toprow">
+    <div>
+      <h1>Modelos de Gestión de Venta</h1>
+      <p>314 unidades · 3 escenarios de comercialización</p>
+    </div>
+    <div class="sc-seg">
+      <button class="sctab cons" onclick="sc(&#39;Conservador&#39;,this)">Conservador</button>
+      <button class="sctab reg" onclick="sc(&#39;Regular&#39;,this)">Regular</button>
+      <button class="sctab opt on" onclick="sc(&#39;Optimista&#39;,this)">Optimista</button>
+    </div>
+  </div>
+
+  <!-- HERO BAND -->
+  <div class="hero opt" id="hero">
+    <div class="hero-main">
+      <div class="hero-esc" id="h-esc">Escenario Optimista</div>
+      <div class="hero-uf">UF</div>
+      <div class="hero-val" id="h-rec">498.851</div>
+      <div class="hero-sub">venta total proyectada · 314 unidades</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-v" id="h-plazo">86</div>
+      <div class="hs-l">meses de venta</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-v" id="h-vel">3</div>
+      <div class="hs-l">uds/mes promedio</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-v" id="h-fl">20</div>
+      <div class="hs-l">uds factor lanzamiento</div>
+    </div>
+  </div>
+
+  <!-- 1 · COMPARACIÓN -->
+  <div class="sec">
+    <div class="sec-hdr">
+      <div class="sec-num">1</div>
+      <div class="sec-title">Comparación de escenarios<span class="sec-sub">— panorama de los tres modelos simultáneamente</span></div>
+    </div>
+    <div class="g3">
+      <div class="cbox cons" id="cbx-Conservador">
+        <div class="cbox-hdr cons">Conservador <em id="em-Conservador">52 meses</em></div>
+        <div class="cbox-body" id="cmp-Conservador"><div class="crow"><span class="cl">Venta total</span><span class="cv or">UF 398.210</span></div><div class="crow"><span class="cl">Plazo de venta</span><span class="cv big">52 meses</span></div><div class="crow"><span class="cl">Velocidad total</span><span class="cv ">5 uds/mes</span></div><div class="crow"><span class="cl">Factor de lanzamiento T1</span><span class="cv ">30 uds</span></div><div class="crow"><span class="cl">Precio prom. 1D1B</span><span class="cv ">UF 1.500</span></div><div class="crow"><span class="cl">Precio prom. Estudio</span><span class="cv ">UF 1.300</span></div><div class="crow hl"><span class="cl">Capital total</span><span class="cv ">UF 26.147</span></div></div>
+      </div>
+      <div class="cbox reg" id="cbx-Regular">
+        <div class="cbox-hdr reg">Regular <em id="em-Regular">65 meses</em></div>
+        <div class="cbox-body" id="cmp-Regular"><div class="crow"><span class="cl">Venta total</span><span class="cv or">UF 449.136</span></div><div class="crow"><span class="cl">Plazo de venta</span><span class="cv big">65 meses</span></div><div class="crow"><span class="cl">Velocidad total</span><span class="cv ">4 uds/mes</span></div><div class="crow"><span class="cl">Factor de lanzamiento T1</span><span class="cv ">24 uds</span></div><div class="crow"><span class="cl">Precio prom. 1D1B</span><span class="cv ">UF 1.650</span></div><div class="crow"><span class="cl">Precio prom. Estudio</span><span class="cv ">UF 1.450</span></div><div class="crow hl"><span class="cl">Capital total</span><span class="cv ">UF 29.446</span></div></div>
+      </div>
+      <div class="cbox opt sel" id="cbx-Optimista">
+        <div class="cbox-hdr opt">Optimista <em id="em-Optimista">86 meses</em></div>
+        <div class="cbox-body" id="cmp-Optimista"><div class="crow"><span class="cl">Venta total</span><span class="cv or">UF 498.851</span></div><div class="crow"><span class="cl">Plazo de venta</span><span class="cv big">86 meses</span></div><div class="crow"><span class="cl">Velocidad total</span><span class="cv ">3 uds/mes</span></div><div class="crow"><span class="cl">Factor de lanzamiento T1</span><span class="cv ">20 uds</span></div><div class="crow"><span class="cl">Precio prom. 1D1B</span><span class="cv ">UF 1.799</span></div><div class="crow"><span class="cl">Precio prom. Estudio</span><span class="cv ">UF 1.600</span></div><div class="crow hl"><span class="cl">Capital total</span><span class="cv ">UF 32.574</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 · RECAUDACIÓN + PRECIOS -->
+  <div class="sec">
+    <div class="sec-hdr">
+      <div class="sec-num">2</div>
+      <div class="sec-title">Venta y precios por tipología<span class="sec-sub" id="sec2-d">— escenario optimista</span></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-hdr"><div class="ctitle">Venta total — desglose por tipología</div></div>
+        <table class="dt"><thead><tr>
+          <th>Tipología</th><th>Uds.</th><th>Vel./mes</th><th>Subtotal (UF)</th>
+        </tr></thead><tbody id="rec-body"><tr><td>1 Dorm. 1 Baño</td><td>111</td><td>1</td><td class="or">241.809</td></tr><tr><td>Estudio</td><td>150</td><td>2</td><td class="or">249.252</td></tr><tr><td>Estac. Autos</td><td>25</td><td>0,29</td><td>6.250</td></tr><tr><td>Bodegas</td><td>28</td><td>0,33</td><td>1.540</td></tr><tr class="tot"><td>TOTAL</td><td>314</td><td>3 Dptos/mes</td><td>498.851</td></tr></tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="ctitle">Precio promedio real — departamentos</div></div>
+        <table class="dt"><thead><tr>
+          <th>Tipología</th><th>Uds.</th><th>Prom. Real (UF)</th><th class="ctr">Plusvalía</th>
+        </tr></thead><tbody id="prc-body"><tr><td>1 Dorm. 1 Baño</td><td>111</td><td class="or">1.799</td><td class="ctr gr">2% / año</td></tr><tr><td>Estudio</td><td>150</td><td class="or">1.600</td><td class="ctr gr">2% / año</td></tr><tr><td>Estac. Autos</td><td>25</td><td>250</td><td class="ctr mu">—</td></tr><tr><td>Bodegas</td><td>28</td><td>55</td><td class="ctr mu">—</td></tr><tr class="tot"><td>TOTAL DPTOS.</td><td>261</td><td class="or">1.685</td><td class="ctr gr">2% / año</td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 · VELOCIDAD + LANZAMIENTO -->
+  <div class="sec">
+    <div class="sec-hdr">
+      <div class="sec-num">3</div>
+      <div class="sec-title">Velocidad de venta y factor de lanzamiento<span class="sec-sub">— ritmo de absorción por tipología</span></div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-hdr"><div class="ctitle">Velocidad de venta (incluye bodegas y estac.)</div></div>
+        <table class="dt"><thead><tr>
+          <th>Tipología</th><th>Uds.</th><th>Vel. uds/mes</th><th>Meses p/agotar</th>
+        </tr></thead><tbody id="vel-body"><tr><td>1 Dorm. 1 Baño</td><td>111</td><td>1</td><td>86 meses</td></tr><tr><td>Estudio</td><td>150</td><td>1</td><td>86 meses</td></tr><tr><td>Estac. Autos</td><td>25</td><td>0,29</td><td>86 meses</td></tr><tr><td>Bodegas</td><td>28</td><td>0,33</td><td>85 meses</td></tr><tr class="tot"><td>TOTAL</td><td>314</td><td>3 uds/mes</td><td>86 meses</td></tr></tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="ctitle">Factor de lanzamiento — T1 (mes de apertura)</div></div>
+        <table class="dt"><thead><tr>
+          <th>Tipología</th><th>F.L. uds (T1)</th><th>Vel. post-lanz.</th><th>Precio venta (UF)</th>
+        </tr></thead><tbody id="fl-body"><tr><td>1 Dorm. 1 Baño</td><td>10</td><td>1 uds/mes</td><td>1.748</td></tr><tr><td>Estudio</td><td>10</td><td>2 uds/mes</td><td>1.554</td></tr><tr><td>Estac. Autos</td><td class="mu">—</td><td>0,29 uds/mes</td><td>250</td></tr><tr><td>Bodegas</td><td class="mu">—</td><td>0,33 uds/mes</td><td>55</td></tr><tr class="tot"><td>Total T1 (lanzamiento)</td><td>20 uds</td><td colspan="2">1D1B + Estudio</td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 · CAPITAL -->
+  <div class="sec">
+    <div class="sec-hdr">
+      <div class="sec-num">4</div>
+      <div class="sec-title">Capital total requerido<span class="sec-sub">— Operación comercial</span></div>
+    </div>
+    <div class="g13">
+      <div>
+        <div class="cap-hero opt" id="cap-hero">
+          <div class="ch-lbl">capital inicial requerido</div>
+          <div class="ch-uf">UF</div>
+          <div class="ch-val" id="cap-val">2.538</div>
+          <div class="ch-sub">4 meses de operación comercial</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-title">Desglose del capital</div>
+          <div class="bdr"><span class="bdl">MKT total (1,5% venta)</span><span class="bdv or" id="cap-mkt-t">UF 7.631</span></div>
+          <div class="bdr"><span class="bdl">Comisión corretaje (5%)</span><span class="bdv" id="cap-corr-t">UF 24.943</span></div>
+          <div class="bdr" style="background:var(--ol);margin:0 -18px;padding:12px 18px">
+            <span class="bdl" style="color:var(--n)"><strong>Capital total requerido</strong></span>
+            <span class="bdv or" style="font-size:16px" id="cap-val2">UF 32.574</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-hdr"><div class="ctitle">Capital — comparación entre escenarios</div></div>
+          <table class="dt">
+            <thead><tr><th>Concepto</th><th>Conservador</th><th>Regular</th><th>Optimista</th></tr></thead>
+            <tbody>
+              <tr class="tot"><td>Capital total requerido</td><td class="or">UF 26.147</td><td class="or">UF 29.446</td><td class="or">UF 32.574</td></tr>
+              <tr><td>MKT total (1,5%)</td><td>UF 6.236</td><td>UF 6.989</td><td>UF 7.631</td></tr>
+              <tr><td>MKT mensual</td><td>UF 115</td><td>UF 104</td><td>UF 87</td></tr>
+              <tr><td>Comisión corretaje (5%)</td><td>UF 19.911</td><td>UF 22.457</td><td>UF 24.943</td></tr>
+            </tbody>
+          </table>
+          <div style="padding:14px 18px;background:var(--g1);border-top:1px solid var(--g2);font-size:12px;color:var(--g6);line-height:1.65">
+            <strong style="color:var(--n)">Nota operacional:</strong> el capital inicial corresponde a los primeros 4 meses de operación comercial. Incluye el marketing mensual (1,5% sobre venta total) más un excedente de UF 148 al inicio, y las comisiones de corretaje (5% sobre venta) que se devengan con las primeras escrituras.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="ftr">
+  <span>LEVEL</span> · Grupo Euro · Edificio AMPLO - Coronel Souper · Documento confidencial · 2026
+</footer>
+
+<script>
+var D={
+  Conservador:{
+    meses:52,vel:5,fl:30,fl1:15,fl2:15,pv:2,
+    tip1:{qty:111,vel:2.13,pb:1755,pp:1500},
+    tip2:{qty:150,vel:2.88,pb:1521,pp:1300},
+    aut:{qty:25,vel:0.48,pb:250},
+    bod:{qty:28,vel:0.54,pb:55},
+    rec_total:398210,rec_1d1b:193532,rec_est:196888,rec_aut:6250,rec_bod:1540,
+    cap_t0:3164,cap_mkt_ms:115,cap_mkt_t:6236,cap_corr_t:19911
+  },
+  Regular:{
+    meses:65,vel:4,fl:24,fl1:12,fl2:12,pv:2,
+    tip1:{qty:111,vel:1.71,pb:1931,pp:1650},
+    tip2:{qty:150,vel:2.31,pb:1697,pp:1450},
+    aut:{qty:25,vel:0.38,pb:250},
+    bod:{qty:28,vel:0.43,pb:55},
+    rec_total:449136,rec_1d1b:219330,rec_est:222016,rec_aut:6250,rec_bod:1540,
+    cap_t0:2836,cap_mkt_ms:104,cap_mkt_t:6989,cap_corr_t:22457
+  },
+  Optimista:{
+    meses:86,vel:3,fl:20,fl1:10,fl2:10,pv:2,
+    tip1:{qty:111,vel:1.29,pb:2106,pp:1799},
+    tip2:{qty:150,vel:1.74,pb:1872,pp:1600},
+    aut:{qty:25,vel:0.29,pb:250},
+    bod:{qty:28,vel:0.33,pb:55},
+    rec_total:498851,rec_1d1b:241809,rec_est:249252,rec_aut:6250,rec_bod:1540,
+    cap_t0:2538,cap_mkt_ms:87,cap_mkt_t:7631,cap_corr_t:24943
+  }
+};
+var CUR="Conservador";
+var ACC={Conservador:"cons",Regular:"reg",Optimista:"opt"};
+
+function uf(v){return Math.round(Math.abs(v)).toLocaleString("es-CL");}
+function n2(v){return v.toLocaleString("es-CL",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function set(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+function crow(l,v,c){
+  return '<div class="crow'+(c==="hl"?" hl":"")+'">'+
+    '<span class="cl">'+l+'</span>'+
+    '<span class="cv '+(c&&c!=="hl"?c:"")+'">'+v+'</span></div>';
+}
+
+function sc(name,btn){
+  CUR=name;
+  document.querySelectorAll(".sctab").forEach(function(b){b.classList.remove("on");});
+  btn.classList.add("on");
+  render();
+}
+
+function render(){
+  var d=D[CUR],cls=ACC[CUR];
+
+  // hero
+  document.getElementById("hero").className="hero "+cls;
+  set("h-esc","Escenario "+CUR);
+  set("h-rec",uf(d.rec_total));
+  set("h-plazo",d.meses);
+  set("h-vel",d.vel);
+  set("h-fl",d.fl);
+
+  // cap hero
+  document.getElementById("cap-hero").className="cap-hero "+cls;
+
+  // comparison borders
+  ["Conservador","Regular","Optimista"].forEach(function(s){
+    var bx=document.getElementById("cbx-"+s);
+    if(bx){bx.className="cbox "+ACC[s]+(s===CUR?" sel":"");}
+  });
+
+  // comparison content
+  ["Conservador","Regular","Optimista"].forEach(function(s){
+    var sd=D[s],el=document.getElementById("cmp-"+s);
+    if(!el)return;
+    el.innerHTML=
+      crow("Venta total","UF "+uf(sd.rec_total),"or")+
+      crow("Plazo de venta",sd.meses+" meses","big")+
+      crow("Velocidad total",sd.vel+" uds/mes","")+
+      crow("Factor de lanzamiento T1",sd.fl+" uds","")+
+      crow("Precio prom. 1D1B","UF "+uf(sd.tip1.pp),"")+
+      crow("Precio prom. Estudio","UF "+uf(sd.tip2.pp),"")+
+      crow("Capital total","UF "+uf(sd.cap_mkt_t+sd.cap_corr_t),"hl");
+  });
+
+  // subtitle
+  set("sec2-d","\u2014 escenario "+CUR.toLowerCase());
+
+  // recaudación
+  var rb="";
+  rb+="<tr><td>1 Dorm. 1 Ba\u00f1o</td><td>111</td><td>"+uf(d.tip1.vel)+"</td><td class='or'>"+uf(d.rec_1d1b)+"</td></tr>";
+  rb+="<tr><td>Estudio</td><td>150</td><td>"+uf(d.tip2.vel)+"</td><td class='or'>"+uf(d.rec_est)+"</td></tr>";
+  rb+="<tr><td>Estac. Autos</td><td>25</td><td>"+n2(d.aut.vel)+"</td><td>"+uf(d.rec_aut)+"</td></tr>";
+  rb+="<tr><td>Bodegas</td><td>28</td><td>"+n2(d.bod.vel)+"</td><td>"+uf(d.rec_bod)+"</td></tr>";
+  rb+="<tr class='tot'><td>TOTAL</td><td>314</td><td>"+d.vel+" Dptos/mes</td><td>"+uf(d.rec_total)+"</td></tr>";
+  document.getElementById("rec-body").innerHTML=rb;
+
+  // precios
+  var pb="";
+  pb+="<tr><td>1 Dorm. 1 Ba\u00f1o</td><td>111</td><td class='or'>"+uf(d.tip1.pp)+"</td><td class='ctr gr'>"+d.pv+"% / a\u00f1o</td></tr>";
+  pb+="<tr><td>Estudio</td><td>150</td><td class='or'>"+uf(d.tip2.pp)+"</td><td class='ctr gr'>"+d.pv+"% / a\u00f1o</td></tr>";
+  pb+="<tr><td>Estac. Autos</td><td>25</td><td>"+uf(d.aut.pb)+"</td><td class='ctr mu'>&mdash;</td></tr>";
+  pb+="<tr><td>Bodegas</td><td>28</td><td>"+uf(d.bod.pb)+"</td><td class='ctr mu'>&mdash;</td></tr>";
+  var ppp=Math.round((111*d.tip1.pp+150*d.tip2.pp)/261);
+  pb+="<tr class='tot'><td>TOTAL DPTOS.</td><td>261</td><td class='or'>"+uf(ppp)+"</td><td class='ctr gr'>"+d.pv+"% / a\u00f1o</td></tr>";
+  document.getElementById("prc-body").innerHTML=pb;
+
+  // velocidad
+  var vb="";
+  [["1 Dorm. 1 Ba\u00f1o",111,d.tip1.vel],["Estudio",150,d.tip2.vel],
+   ["Estac. Autos",25,d.aut.vel],["Bodegas",28,d.bod.vel]].forEach(function(r,i){
+    var velDisplay = i < 2 ? Math.floor(r[2]) : n2(r[2]);
+    vb+="<tr><td>"+r[0]+"</td><td>"+r[1]+"</td><td>"+velDisplay+"</td><td>"+Math.round(r[1]/r[2])+" meses</td></tr>";
+  });
+  vb+="<tr class='tot'><td>TOTAL</td><td>314</td><td>"+d.vel+" uds/mes</td><td>"+d.meses+" meses</td></tr>";
+  document.getElementById("vel-body").innerHTML=vb;
+
+  // factor lanzamiento
+  var fb="";
+  fb+="<tr><td>1 Dorm. 1 Ba\u00f1o</td><td>"+d.fl1+"</td><td>"+uf(d.tip1.vel)+" uds/mes</td><td>"+uf(d.tip1.pb*0.83)+"</td></tr>";
+  fb+="<tr><td>Estudio</td><td>"+d.fl2+"</td><td>"+uf(d.tip2.vel)+" uds/mes</td><td>"+uf(d.tip2.pb*0.83)+"</td></tr>";
+  fb+="<tr><td>Estac. Autos</td><td class='mu'>&mdash;</td><td>"+n2(d.aut.vel)+" uds/mes</td><td>"+uf(d.aut.pb)+"</td></tr>";
+  fb+="<tr><td>Bodegas</td><td class='mu'>&mdash;</td><td>"+n2(d.bod.vel)+" uds/mes</td><td>"+uf(d.bod.pb)+"</td></tr>";
+  fb+="<tr class='tot'><td>Total T1 (lanzamiento)</td><td>"+d.fl+" uds</td><td colspan='2'>1D1B + Estudio</td></tr>";
+  document.getElementById("fl-body").innerHTML=fb;
+
+  // capital
+  var cap_total = d.cap_mkt_t + d.cap_corr_t;
+  set("cap-val", uf(d.cap_t0));
+  set("cap-val2","UF "+uf(cap_total));
+  set("cap-mkt-t","UF "+uf(d.cap_mkt_t));
+  set("cap-corr-t","UF "+uf(d.cap_corr_t));
+}
+
+window.addEventListener("DOMContentLoaded",function(){render();});
+</script>
+
+
+</body></html>
