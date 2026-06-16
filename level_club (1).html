@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Level Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1d428a;--navy-dk:#0d2657;--navy-lt:#e8edf7;--orange:#ff9800;--orange-lt:#fff3e0;--orange-dk:#cc7a00;--white:#fff;--g50:#f5f5f0;--g200:#e0ddd5;--g400:#9a9a8a;--g900:#1a1a14;--green:#2e7d32;--green-lt:#e8f5e9;--purple:#7c3aed;--purple-lt:#ede7f6;--red:#c62828;--red-lt:#ffebee}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Open Sans',sans-serif;background:var(--g50);color:var(--g900);min-height:100vh}
+
+#login{position:fixed;inset:0;z-index:9999;background:var(--navy-dk);display:flex;align-items:center;justify-content:center;transition:opacity .5s,transform .5s}
+#login.out{opacity:0;transform:scale(1.05);pointer-events:none}
+.lbox{background:#fff;border-radius:24px;padding:2.5rem;width:350px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.lbox::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--navy),var(--orange))}
+.llogo{width:56px;height:56px;background:var(--navy);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:var(--orange);margin:0 auto 1.25rem}
+.ltitle{font-size:1.5rem;font-weight:800;color:var(--navy)}.ltitle span{color:var(--orange)}
+.lsub{font-size:12px;color:var(--g400);margin:.25rem 0 1.5rem}
+.linput{width:100%;padding:.8rem 1rem;border:1.5px solid var(--g200);border-radius:11px;font-size:14px;font-family:inherit;margin-bottom:.7rem;background:var(--g50);transition:.15s}.linput:focus{outline:none;border-color:var(--orange);background:#fff}
+.lbtn{width:100%;padding:.85rem;border:none;border-radius:11px;background:var(--orange);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:.4rem}.lbtn:hover{background:var(--orange-dk)}
+.lerr{font-size:12px;color:#c62828;margin-top:.6rem;min-height:16px}
+
+#app{display:none;opacity:0;transition:opacity .4s}#app.show{display:block;opacity:1}
+.topbar{background:#fff;border-bottom:1px solid var(--g200);display:flex;align-items:center;padding:0 1.5rem;height:50px;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:8px;padding-right:1.1rem;border-right:1px solid var(--g200);margin-right:.8rem;flex-shrink:0}
+.blogo{width:28px;height:28px;background:var(--navy);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--orange)}
+.bname{font-size:13px;font-weight:700}.bname span{color:var(--orange)}
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{padding:0 .85rem;height:50px;font-size:11px;font-weight:600;color:var(--g400);background:none;border:none;cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:.15s;font-family:inherit}.tab:hover{color:var(--g900)}.tab.active{color:var(--navy);border-bottom-color:var(--orange)}
+.uinfo{margin-left:auto;display:flex;align-items:center;gap:10px}
+.reset-top{font-size:10px;font-weight:700;color:var(--g400);background:none;border:1px solid var(--g200);border-radius:7px;padding:5px 10px;cursor:pointer;font-family:inherit;transition:.15s}.reset-top:hover{border-color:var(--red);color:var(--red)}
+.uavatar{width:26px;height:26px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff}.uname{font-size:11px;font-weight:600;color:var(--g400)}
+
+.pg{max-width:980px;margin:0 auto;padding:2rem 1.5rem 4rem;display:none;animation:fd .25s}.pg.active{display:block}@keyframes fd{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.hero{border-radius:20px;padding:2rem 2.5rem;color:#fff;position:relative;overflow:hidden;margin-bottom:1.5rem}.hero-n{background:linear-gradient(140deg,var(--navy),var(--navy-dk))}.hero-o{background:linear-gradient(135deg,var(--orange),var(--orange-dk))}.hero-p{background:linear-gradient(135deg,var(--purple),#4c1d95)}
+.hero::after{content:'';position:absolute;right:-45px;top:-45px;width:200px;height:200px;border:45px solid rgba(255,255,255,.06);border-radius:50%;pointer-events:none}
+.htag{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.4rem;position:relative;z-index:1}
+.htitle{font-size:2rem;font-weight:800;line-height:1.05;margin-bottom:.4rem;position:relative;z-index:1}.htitle span{color:var(--orange)}
+.hsub{font-size:12px;color:rgba(255,255,255,.5);max-width:480px;line-height:1.6;position:relative;z-index:1}
+.sl{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g400);margin:2rem 0 1rem;display:flex;align-items:center;gap:8px}.sl::after{content:'';flex:1;height:.5px;background:var(--g200)}
+
+.psel{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+.pbtn{padding:.5rem 1rem;border-radius:9px;font-size:11px;font-weight:700;border:1.5px solid var(--g200);background:#fff;cursor:pointer;transition:.15s;font-family:inherit}.pbtn:hover{border-color:var(--orange)}.pbtn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:.5px solid var(--g200);margin-bottom:1.5rem;font-size:11px}
+.tbl th{background:var(--navy);color:#fff;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.6rem .5rem;text-align:center}.tbl th:first-child{text-align:left}
+.tbl td{padding:.55rem .5rem;border-bottom:.5px solid var(--g200);text-align:center}.tbl td:first-child{text-align:left;font-weight:600}.tbl tr:last-child td{border-bottom:none}
+.pct{font-weight:800;color:var(--orange-dk)}.money{font-weight:700;color:var(--navy)}.pts{font-weight:700;color:var(--orange)}
+
+.etbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:.5px solid var(--g200);font-size:11px}
+.etbl th{background:var(--orange);color:#fff;font-size:9px;font-weight:700;padding:.6rem .5rem;text-align:center;text-transform:uppercase}.etbl th:first-child,.etbl th:nth-child(2){text-align:left}
+.etbl td{padding:.5rem;border-bottom:.5px solid var(--g200);text-align:center}.etbl td:first-child,.etbl td:nth-child(2){text-align:left}.etbl tr:last-child td{border-bottom:none}
+.badge{font-size:8px;font-weight:700;padding:2px 6px;border-radius:6px;display:inline-block}
+.b-bienvenida{background:#e3f2fd;color:#1565c0}.b-bonus{background:#ede7f6;color:#4527a0}.b-engagement{background:#fff3e0;color:#e65100}.b-permanencia{background:#e8f5e9;color:#2e7d32}.b-referidos{background:#fce4ec;color:#c62828}
+
+.tier-path{display:flex;flex-direction:column;gap:0;margin-bottom:1.5rem}
+.tier-stage{background:#fff;border:.5px solid var(--g200);border-radius:14px;padding:1.25rem;display:flex;align-items:flex-start;gap:16px;position:relative;transition:.2s;margin-bottom:-1px}
+.tier-stage.locked{opacity:.5;filter:grayscale(.3)}
+.tier-stage.current{border:2px solid var(--orange);box-shadow:0 4px 16px rgba(255,152,0,.15);z-index:1}
+.tier-stage.unlocked{border-color:var(--green)}
+.tier-badge{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;color:#fff;position:relative}
+.tier-badge.locked::after{content:'🔒';position:absolute;font-size:12px;bottom:-4px;right:-4px}
+.tier-info{flex:1;min-width:0}.tier-name{font-size:14px;font-weight:800;margin-bottom:.15rem}.tier-range{font-size:11px;color:var(--g400);margin-bottom:.4rem}
+.tier-benefits{display:flex;flex-wrap:wrap;gap:6px}
+.tier-ben{font-size:10px;padding:3px 8px;border-radius:6px;background:var(--g50);color:var(--g400);border:.5px solid var(--g200)}
+.tier-stage.current .tier-ben{background:var(--orange-lt);color:var(--orange-dk);border-color:var(--orange)}
+.tier-stage.unlocked .tier-ben{background:var(--green-lt);color:var(--green);border-color:#a5d6a7}
+.tier-dcto{text-align:right;flex-shrink:0;min-width:70px}.tier-dcto-val{font-size:1.5rem;font-weight:800;color:var(--orange);line-height:1}.tier-dcto-lbl{font-size:9px;color:var(--g400);font-weight:600}
+
+.journey{background:#fff;border:.5px solid var(--g200);border-radius:16px;padding:1.5rem;margin-bottom:1.5rem}
+.journey-title{font-size:13px;font-weight:800;color:var(--navy);margin-bottom:.4rem;display:flex;align-items:center;gap:8px}
+.journey-sub{font-size:11px;color:var(--g400);margin-bottom:1.25rem;line-height:1.5}
+.journey-actions{display:flex;gap:8px;flex-wrap:wrap}
+.ja-btn{padding:.7rem 1rem;border-radius:11px;border:1.5px solid var(--g200);background:#fff;cursor:pointer;font-family:inherit;transition:.15s;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--g900)}
+.ja-btn:hover{border-color:var(--orange);background:var(--orange-lt)}
+.ja-btn .ja-ic{font-size:18px}.ja-btn .ja-pts{font-size:10px;color:var(--orange-dk);font-weight:700}
+
+.shop-bar{background:var(--navy-dk);border-radius:16px;padding:1.5rem 2rem;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:.75rem}
+.sb-left{display:flex;align-items:center;gap:12px}.sb-icon{font-size:2rem}
+.sb-val{font-size:2.4rem;font-weight:800;color:var(--orange);line-height:1;font-variant-numeric:tabular-nums}.sb-lbl{font-size:10px;color:rgba(255,255,255,.4);font-weight:600;margin-top:.2rem}
+.sb-btns{display:flex;gap:6px;flex-wrap:wrap}
+.sb-btn{padding:.5rem 1rem;border-radius:8px;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
+.sb-earn{background:var(--orange);color:#fff}.sb-earn:hover{background:var(--orange-dk)}
+.sb-reset{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.15)}.sb-reset:hover{background:rgba(255,255,255,.2)}
+.tier-prog{background:var(--navy);border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:14px;color:#fff}
+.tp-current{font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;flex-shrink:0}.tp-dot{width:10px;height:10px;border-radius:50%}
+.tp-track{flex:1;background:rgba(255,255,255,.1);border-radius:99px;height:8px;position:relative;overflow:hidden}.tp-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--orange),#ffd54f);transition:width .5s}
+.tp-next{font-size:11px;color:rgba(255,255,255,.4);flex-shrink:0}
+.shop-filters{display:flex;gap:5px;margin-bottom:1rem;flex-wrap:wrap}
+.sf{padding:.4rem .8rem;border-radius:7px;font-size:10px;font-weight:600;border:1px solid var(--g200);background:#fff;cursor:pointer;transition:.15s;font-family:inherit}.sf:hover{border-color:var(--orange)}.sf.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.sc{background:#fff;border:1px solid var(--g200);border-radius:12px;overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+.sc:hover:not(.locked){border-color:var(--orange);box-shadow:0 3px 12px rgba(255,152,0,.1);transform:translateY(-2px)}
+.sc.locked{opacity:.45;filter:grayscale(.3)}.sc.done{border-color:var(--green);background:var(--green-lt)}
+.sc-img{height:65px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:var(--g50)}
+.sc-body{padding:.75rem;flex:1;display:flex;flex-direction:column}
+.sc-cat{font-size:8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--orange);margin-bottom:.15rem}
+.sc-title{font-size:11.5px;font-weight:800;margin-bottom:.1rem;line-height:1.25}
+.sc-desc{font-size:10px;color:var(--g400);line-height:1.4;flex:1;margin-bottom:.5rem}
+.sc-prog{background:var(--g200);border-radius:99px;height:4px;margin-bottom:.35rem;overflow:hidden}.sc-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--navy),var(--orange));transition:width .4s}
+.sc-foot{display:flex;align-items:center;justify-content:space-between}
+.sc-pts{font-size:13px;font-weight:800;color:var(--navy)}.sc-sub{font-size:8px;color:var(--g400);font-weight:600}
+.sc-btn{font-size:9px;font-weight:700;padding:4px 10px;border-radius:6px;border:none;cursor:pointer;background:var(--orange);color:#fff;font-family:inherit}.sc-btn:disabled{background:var(--g200);color:var(--g400);cursor:default}.sc.done .sc-btn{background:var(--green)}
+
+.hist{display:flex;flex-direction:column;gap:6px;margin-bottom:1.5rem}
+.hi{display:flex;align-items:center;gap:10px;background:#fff;border:.5px solid var(--g200);border-radius:10px;padding:.6rem .85rem}
+.hi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}.hi-dot.earn{background:var(--green)}.hi-dot.spend{background:var(--orange)}
+.hi-txt{flex:1;font-size:11.5px}.hi-time{font-size:9px;color:var(--g400)}
+.hi-val{font-size:12px;font-weight:700;white-space:nowrap}.hi-val.earn{color:var(--green)}.hi-val.spend{color:var(--orange)}
+.hi-empty{text-align:center;padding:1.5rem;font-size:12px;color:var(--g400)}
+
+/* EURO PROPERTIES */
+.euro-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:1.5rem}
+.ep{background:#fff;border:1px solid var(--g200);border-radius:16px;overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+.ep:hover{box-shadow:0 6px 20px rgba(13,38,87,.12);transform:translateY(-2px)}
+.ep-img{height:120px;background:linear-gradient(135deg,var(--navy-lt),#d4e0f5);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative}
+.ep-tag{position:absolute;top:10px;left:10px;background:var(--orange);color:#fff;font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px}
+.ep-tag.preventa{background:var(--purple)}
+.ep-body{padding:1rem;flex:1;display:flex;flex-direction:column}
+.ep-name{font-size:14px;font-weight:800;margin-bottom:.15rem}.ep-loc{font-size:11px;color:var(--g400);margin-bottom:.6rem}
+.ep-specs{display:flex;gap:10px;margin-bottom:.75rem;flex-wrap:wrap}
+.ep-spec{font-size:10px;color:var(--g400);display:flex;align-items:center;gap:3px}
+.ep-price-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:.6rem}
+.ep-price{font-size:18px;font-weight:800;color:var(--navy)}.ep-price-uf{font-size:10px;color:var(--g400)}
+.ep-pts-box{background:var(--orange-lt);border:1px solid #ffe0b2;border-radius:10px;padding:.7rem;margin-bottom:.6rem}
+.ep-pts-label{font-size:9px;font-weight:700;color:var(--orange-dk);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem}
+.ep-pts-row{display:flex;align-items:center;justify-content:space-between}
+.ep-pts-disc{font-size:14px;font-weight:800;color:var(--orange-dk)}.ep-pts-cost{font-size:10px;color:var(--g400)}
+.ep-btn{width:100%;padding:.7rem;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;background:var(--navy);color:#fff}.ep-btn:hover{background:var(--navy-dk)}
+.ep-btn:disabled{background:var(--g200);color:var(--g400);cursor:default}
+
+/* NOTIFICATIONS */
+.notif-summary{display:flex;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.ns{flex:1;min-width:120px;background:#fff;border:.5px solid var(--g200);border-radius:12px;padding:1rem;text-align:center}
+.ns-val{font-size:1.6rem;font-weight:800;line-height:1}.ns-lbl{font-size:10px;color:var(--g400);font-weight:600;margin-top:.3rem}
+.ns-pend .ns-val{color:var(--orange)}.ns-done .ns-val{color:var(--green)}.ns-info .ns-val{color:var(--navy)}
+.notif-list{display:flex;flex-direction:column;gap:10px}
+.nt{background:#fff;border:.5px solid var(--g200);border-radius:14px;padding:1.1rem 1.25rem;display:flex;gap:14px;align-items:flex-start;transition:.2s}
+.nt.urgent{border-left:4px solid var(--orange)}
+.nt.info{border-left:4px solid var(--navy)}
+.nt.done{opacity:.6;border-left:4px solid var(--green)}
+.nt-ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--g50)}
+.nt-body{flex:1;min-width:0}
+.nt-title{font-size:13px;font-weight:800;margin-bottom:.2rem}
+.nt-desc{font-size:11.5px;color:var(--g400);line-height:1.5;margin-bottom:.5rem}
+.nt-meta{font-size:9px;color:var(--g400);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.nt-actions{display:flex;gap:6px;margin-top:.6rem;flex-wrap:wrap}
+.nt-btn{font-size:11px;font-weight:700;padding:6px 14px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;transition:.15s}
+.nt-approve{background:var(--green);color:#fff}.nt-approve:hover{background:#1b5e20}
+.nt-reject{background:#fff;border:1px solid var(--g200);color:var(--g400)}.nt-reject:hover{border-color:var(--red);color:var(--red)}
+.nt-view{background:var(--navy);color:#fff}.nt-view:hover{background:var(--navy-dk)}
+.nt-done-badge{font-size:11px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:.5rem}
+
+/* PHONE */
+.phone-wrap{display:flex;justify-content:center;padding:1rem 0}
+.phone{width:360px;max-width:100%;height:720px;background:var(--navy-dk);border-radius:36px;padding:10px;box-shadow:0 20px 60px rgba(13,38,87,.3);position:relative}
+.phone-notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:120px;height:22px;background:var(--navy-dk);border-radius:0 0 14px 14px;z-index:10}
+.phone-screen{background:var(--g50);border-radius:28px;height:100%;overflow-y:auto;scrollbar-width:none;position:relative}.phone-screen::-webkit-scrollbar{display:none}
+.app-head{background:linear-gradient(140deg,var(--navy),var(--navy-dk));padding:2rem 1.25rem 1.5rem;color:#fff;position:relative;overflow:hidden}
+.app-head::after{content:'';position:absolute;right:-30px;top:-30px;width:140px;height:140px;border:30px solid rgba(255,152,0,.1);border-radius:50%}
+.app-greet{font-size:11px;color:rgba(255,255,255,.5);position:relative;z-index:1}
+.app-name-row{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;margin-top:.2rem}
+.app-uname{font-size:18px;font-weight:800}.app-tier-chip{background:rgba(255,152,0,.2);border:1px solid rgba(255,152,0,.4);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--orange)}
+.app-balance{margin-top:1.25rem;position:relative;z-index:1}
+.app-bal-val{font-size:2.4rem;font-weight:800;color:var(--orange);line-height:1}.app-bal-lbl{font-size:10px;color:rgba(255,255,255,.4);font-weight:600;margin-top:.2rem}
+.app-prog{margin-top:1rem;position:relative;z-index:1}
+.app-prog-track{background:rgba(255,255,255,.12);border-radius:99px;height:6px;overflow:hidden}.app-prog-fill{height:100%;background:linear-gradient(90deg,var(--orange),#ffd54f);border-radius:99px;transition:width .5s}
+.app-prog-txt{font-size:9px;color:rgba(255,255,255,.5);margin-top:.4rem}
+.app-section{padding:1.25rem}
+.app-sec-title{font-size:11px;font-weight:800;color:var(--g900);margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between}
+.app-sec-title span{font-size:9px;color:var(--orange);font-weight:700}
+.app-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.aq{background:#fff;border:.5px solid var(--g200);border-radius:12px;padding:.85rem;cursor:pointer;transition:.15s}.aq:active{transform:scale(.97)}.aq:hover{border-color:var(--orange)}
+.aq-ic{font-size:20px;margin-bottom:.35rem}.aq-t{font-size:11px;font-weight:700;line-height:1.2}.aq-s{font-size:9px;color:var(--orange-dk);font-weight:700;margin-top:.2rem}
+.app-notif{border-radius:12px;padding:.85rem;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.app-notif.urgent{background:var(--orange-lt);border:.5px solid #ffe0b2}
+.app-notif.info{background:var(--navy-lt);border:.5px solid #c5d3ed}
+.app-notif-ic{font-size:18px}.app-notif-txt{flex:1;font-size:11px;line-height:1.4}
+.app-notif.urgent .app-notif-txt{color:var(--orange-dk)}.app-notif.info .app-notif-txt{color:var(--navy)}
+.app-notif-txt strong{font-weight:800}
+.app-card{background:#fff;border:.5px solid var(--g200);border-radius:12px;padding:.85rem;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.app-card-ic{width:38px;height:38px;border-radius:9px;background:var(--orange-lt);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.app-card-info{flex:1;min-width:0}.app-card-t{font-size:12px;font-weight:700}.app-card-s{font-size:10px;color:var(--g400)}
+.app-card-pts{font-size:12px;font-weight:800;color:var(--orange);white-space:nowrap}
+.app-nav{position:sticky;bottom:0;background:#fff;border-top:.5px solid var(--g200);display:flex;padding:.5rem .25rem}
+.an{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;padding:.3rem;font-family:inherit;color:var(--g400)}.an.active{color:var(--navy)}
+.an-ic{font-size:17px}.an-lbl{font-size:8px;font-weight:700}
+
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(3px)}.mbg.show{display:flex}
+.modal{background:#fff;border-radius:18px;padding:1.75rem;max-width:340px;width:100%;text-align:center;animation:pop .3s cubic-bezier(.34,1.56,.64,1)}@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.mi{font-size:2.8rem;margin-bottom:.4rem}.mt{font-size:1.1rem;font-weight:800;margin-bottom:.2rem}.ms{font-size:11px;color:var(--g400);line-height:1.5;margin-bottom:.6rem}.mp{font-size:1.4rem;font-weight:800;color:var(--orange);margin-bottom:.6rem}
+.mok{width:100%;padding:.75rem;border-radius:10px;border:none;background:var(--orange);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}.mok:hover{background:var(--orange-dk)}
+.mcancel{width:100%;padding:.5rem;border-radius:10px;border:1px solid var(--g200);background:none;color:var(--g400);font-size:11px;font-weight:600;cursor:pointer;margin-top:.35rem;font-family:inherit}
+.toast{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy-dk);color:#fff;padding:.65rem 1.2rem;border-radius:24px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:6px;opacity:0;transition:.3s cubic-bezier(.34,1.56,.64,1);z-index:300;box-shadow:0 4px 14px rgba(0,0,0,.3)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.confetti{position:fixed;width:7px;height:7px;pointer-events:none;z-index:999;animation:cf 1.1s ease-in forwards}@keyframes cf{0%{transform:translateY(-15px) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* SLIDER SIMULATOR */
+.scen{background:#fff;border:.5px solid var(--g200);border-radius:16px;padding:1.75rem;margin-bottom:1.5rem}
+.scen-plan{margin-bottom:1.5rem}
+.scen-plan-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g400);margin-bottom:.5rem}
+.scen-plan-sel{width:100%;padding:.85rem 1rem;border:1.5px solid var(--g200);border-radius:11px;font-size:14px;font-family:inherit;font-weight:600;color:var(--g900);background:var(--g50);cursor:pointer}
+.scen-sliders{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.ss{display:flex;flex-direction:column}
+.ss-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.6rem}
+.ss-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400);line-height:1.3}
+.ss-val{font-size:20px;font-weight:800;color:var(--orange);white-space:nowrap}
+.ss-val.navy{color:var(--navy)}
+.ss-slider{-webkit-appearance:none;width:100%;height:6px;border-radius:99px;background:var(--g200);outline:none;cursor:pointer}
+.ss-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--orange);border:3px solid #fff;cursor:pointer;box-shadow:0 2px 8px rgba(255,152,0,.4)}
+.ss-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--orange);border:3px solid #fff;cursor:pointer;box-shadow:0 2px 8px rgba(255,152,0,.4)}
+.ss-range{font-size:9px;color:var(--g400);margin-top:.4rem}
+.scen-results{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:1.5rem}
+.scr{background:var(--g50);border:.5px solid var(--g200);border-radius:12px;padding:1rem}
+.scr-lbl{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g400);margin-bottom:.4rem}
+.scr-val{font-size:1.3rem;font-weight:800;line-height:1.1}
+.scr-val.navy{color:var(--navy)}.scr-val.orange{color:var(--orange-dk)}
+.scr-sub{font-size:10px;color:var(--g400);margin-top:.3rem;line-height:1.4}
+.scen-formula{background:var(--navy-dk);border-radius:14px;padding:1.25rem 1.5rem;margin-top:1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.scf-text{font-size:13px;color:rgba(255,255,255,.7);font-family:monospace}
+.scf-text b{color:var(--orange);font-weight:700}
+.scf-right{text-align:right}
+.scf-right-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.scf-right-val{font-size:1.6rem;font-weight:800;color:var(--orange);line-height:1}
+.scen-pts{background:var(--orange-lt);border:1px solid #ffe0b2;border-radius:14px;padding:1.25rem 1.5rem;margin-top:1rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.scp-left{font-size:12px;color:var(--orange-dk);line-height:1.5}.scp-left b{font-weight:800}
+.scp-val{font-size:1.6rem;font-weight:800;color:var(--orange-dk);line-height:1}
+@media(max-width:700px){.scen-sliders{grid-template-columns:1fr}.scen-results{grid-template-columns:1fr 1fr}}
+
+@media(max-width:600px){.shop-grid{grid-template-columns:1fr 1fr}.tier-stage{flex-wrap:wrap}.tier-dcto{width:100%;text-align:left;margin-top:.5rem}.htitle{font-size:1.6rem}.journey-actions{flex-direction:column}.ja-btn{width:100%}.euro-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="lbox"><div class="llogo">L</div><div class="ltitle">level <span>club</span></div><div class="lsub">Ingresa tus credenciales</div>
+  <input class="linput" id="lu" type="text" placeholder="Usuario" autocomplete="off" autofocus>
+  <input class="linput" id="lp" type="password" placeholder="Contraseña">
+  <button class="lbtn" id="login-btn">Ingresar</button><div class="lerr" id="lerr"></div></div>
+</div>
+
+<div id="app">
+<nav class="topbar">
+  <div class="brand"><div class="blogo">L</div><span class="bname">level <span>club</span></span></div>
+  <div class="tabs">
+    <button class="tab active" data-tab="ref">plan de referidos</button>
+    <button class="tab" data-tab="mat">matriz de descuentos</button>
+    <button class="tab" data-tab="shop">canjea tus puntos</button>
+    <button class="tab" data-tab="euro">¿quieres comprar otro depto?</button>
+    <button class="tab" data-tab="notif">mis notificaciones</button>
+    <button class="tab" data-tab="mobile">vista app móvil</button>
+  </div>
+  <div class="uinfo"><button class="reset-top" id="reset-global">↺ Reset</button><div class="uavatar" id="uav">CM</div><span class="uname" id="unm">Cristobal</span></div>
+</nav>
+
+<!-- TAB 1: PLAN DE REFERIDOS -->
+<div class="pg active" id="p-ref">
+  <div class="hero hero-n"><div class="htag">level club · plan de referidos</div><h1 class="htitle">refiere y <span>gana</span></h1><p class="hsub">Cada depto. que refieres sube tu tramo, baja tu comisión y suma puntos. Los 7 tramos de Member a Legend.</p></div>
+  <div class="journey">
+    <div class="journey-title">⚡ Simula tu recorrido</div>
+    <div class="journey-sub">Presiona las acciones como lo haría un propietario real. Tus puntos y tu tramo suben en vivo y se reflejan en todas las pestañas.</div>
+    <div class="journey-actions" id="journey-actions"></div>
+  </div>
+
+  <div class="sl">configura tu escenario</div>
+  <div class="scen">
+    <div class="scen-plan">
+      <div class="scen-plan-lbl">plan contratado</div>
+      <select class="scen-plan-sel" id="scen-plan">
+        <option value="0.07">Plan inicial — tarifa base 7,0% + IVA</option>
+        <option value="0.09" selected>Plan asegurado — tarifa base 9,0% + IVA</option>
+        <option value="0.12">Plan full asegurado — tarifa base 12,0% + IVA</option>
+      </select>
+    </div>
+    <div class="scen-sliders">
+      <div class="ss">
+        <div class="ss-head"><span class="ss-lbl">Deptos. propios en Level</span><span class="ss-val navy" id="sc-prop-v">2</span></div>
+        <input type="range" class="ss-slider" id="sc-prop" min="1" max="100" value="2">
+        <div class="ss-range">1 — 100 unidades</div>
+      </div>
+      <div class="ss">
+        <div class="ss-head"><span class="ss-lbl">Unidades a referir</span><span class="ss-val" id="sc-ref-v">3</span></div>
+        <input type="range" class="ss-slider" id="sc-ref" min="0" max="100" value="3">
+        <div class="ss-range">0 — 100 · suman a tus deptos. propios para el tramo</div>
+      </div>
+      <div class="ss">
+        <div class="ss-head"><span class="ss-lbl">Arriendo promedio por depto.</span><span class="ss-val navy" id="sc-arr-v">$350.000</span></div>
+        <input type="range" class="ss-slider" id="sc-arr" min="100000" max="2000000" step="10000" value="350000">
+        <div class="ss-range">$100.000 — $2.000.000</div>
+      </div>
+    </div>
+    <div class="scen-results" id="scen-results"></div>
+    <div class="scen-formula" id="scen-formula"></div>
+    <div class="scen-pts" id="scen-pts"></div>
+  </div>
+
+  <div class="sl">progresión de tramos</div>
+  <div class="tier-path" id="tier-path"></div>
+  <div class="sl">cómo se ganan puntos</div>
+  <div id="earn-tbl"></div>
+</div>
+
+<!-- TAB 2: MATRIZ -->
+<div class="pg" id="p-mat">
+  <div class="hero hero-n"><div class="htag">level club · matriz completa</div><h1 class="htitle">escala de <span>descuentos</span></h1><p class="hsub">Descuentos en comisión de administración y corretaje. Selecciona el plan para ver tasas resultantes.</p></div>
+  <div class="sl">matriz de descuentos</div>
+  <div id="dcto-tbl"></div>
+  <div class="psel" id="plan-sel"></div>
+  <div id="plan-tbl"></div>
+</div>
+
+<!-- TAB 3: CANJEA -->
+<div class="pg" id="p-shop">
+  <div class="shop-bar"><div class="sb-left"><div class="sb-icon">⭐</div><div><div class="sb-val" id="bv">0</div><div class="sb-lbl">puntos disponibles · 1 pt = $1 CLP</div></div></div>
+  <div class="sb-btns"><button class="sb-btn sb-earn" data-add="50000">+$50k</button><button class="sb-btn sb-earn" data-add="150000">+$150k</button><button class="sb-btn sb-earn" data-add="500000">+$500k</button><button class="sb-btn sb-reset" id="shop-reset">Reset</button></div></div>
+  <div class="tier-prog" id="tp"></div>
+  <div class="shop-filters" id="sfil"></div>
+  <div class="shop-grid" id="sg"></div>
+  <div class="sl">historial de movimientos</div>
+  <div class="hist" id="hist"></div>
+</div>
+
+<!-- TAB 4: EURO -->
+<div class="pg" id="p-euro">
+  <div class="hero hero-p"><div class="htag">level club · grupo euro</div><h1 class="htitle">¿quieres comprar <span style="color:#fff">otro depto?</span></h1><p class="hsub">Usa tus Level Points como descuento directo de tu próxima inversión con Euro Inmobiliaria. 1 punto = $1 CLP de descuento.</p></div>
+  <div class="shop-bar" style="background:linear-gradient(135deg,var(--purple),#4c1d95)"><div class="sb-left"><div class="sb-icon">💰</div><div><div class="sb-val" id="bv-euro" style="color:#fff">0</div><div class="sb-lbl">puntos disponibles para tu inversión</div></div></div>
+  <div class="sb-btns"><button class="sb-btn sb-earn" data-add="50000" style="background:#fff;color:var(--purple)">+$50k</button><button class="sb-btn sb-earn" data-add="500000" style="background:#fff;color:var(--purple)">+$500k</button><button class="sb-btn sb-reset" id="euro-reset">Reset</button></div></div>
+  <div class="sl">oportunidades de inversión · proyectos euro</div>
+  <div class="euro-grid" id="euro-grid"></div>
+  <div class="sl">cómo funciona</div>
+  <div style="background:#fff;border:.5px solid var(--g200);border-radius:14px;padding:1.5rem;font-size:12.5px;color:var(--g400);line-height:1.7">
+    Tus puntos acumulados en Level Club se transforman en <strong style="color:var(--navy)">descuento directo en el pie</strong> de tu próximo departamento de inversión con Euro. Mientras más alto tu tramo, mayor el tope de puntos aplicables. Al reservar, un ejecutivo Euro te contacta para coordinar la compra y aplicar el beneficio. El depto. que compres puede entrar a administración Level y sumar a tu tramo — cerrando el círculo.
+  </div>
+</div>
+
+<!-- TAB 5: NOTIFICACIONES -->
+<div class="pg" id="p-notif">
+  <div class="hero hero-n"><div class="htag">level club · administración de tu cartera</div><h1 class="htitle">mis <span>notificaciones</span></h1><p class="hsub">Todo lo que pasa con tus deptos. en un solo lugar. Aprueba cotizaciones, precios y decisiones de arriendo directo desde aquí.</p></div>
+  <div class="notif-summary" id="notif-summary"></div>
+  <div class="sl">requieren tu acción</div>
+  <div class="notif-list" id="notif-list"></div>
+</div>
+
+<!-- TAB 6: MÓVIL -->
+<div class="pg" id="p-mobile">
+  <div class="hero hero-o"><div class="htag">level club · experiencia del propietario</div><h1 class="htitle">así lo ve <span style="color:#fff">el propietario</span></h1><p class="hsub">La app Level Club desde el celular. Gestiona cartera, aprueba pendientes, gana puntos y canjea beneficios desde un solo lugar.</p></div>
+  <div class="phone-wrap"><div class="phone"><div class="phone-notch"></div><div class="phone-screen" id="phone-screen"></div></div></div>
+</div>
+</div>
+
+<div class="toast" id="toast"><span id="ti">⭐</span><span id="tm"></span></div>
+<div class="mbg" id="mbg"><div class="modal"><div class="mi" id="mi"></div><div class="mt" id="mti"></div><div class="ms" id="ms"></div><div class="mp" id="mp"></div><button class="mok" id="mok">Confirmar</button><button class="mcancel" id="mcancel">Cancelar</button></div></div>
+
+<script>
+(function(){
+"use strict";
+
+// ===== STATE =====
+var bal=0, redeemed=[], curPlan=1, shopCat='Todos', history=[], notifState={};
+
+var TIERS=[
+  {n:'Member',mn:0,mx:2,da:0,dc:'-',pts:0,bg:'#c8c8c0',ic:'🆕',acum:0},
+  {n:'Associate',mn:3,mx:9,da:.05,dc:'5%',pts:50000,bg:'#FFB74D',ic:'🥉',acum:150000},
+  {n:'Partner',mn:10,mx:19,da:.10,dc:'10%',pts:50000,bg:'#FF9800',ic:'🥈',acum:500000},
+  {n:'Premium',mn:20,mx:34,da:.15,dc:'15%',pts:50000,bg:'#F57C00',ic:'🥇',acum:1000000},
+  {n:'Platinum',mn:35,mx:49,da:.20,dc:'20%',pts:50000,bg:'#1d428a',ic:'💎',acum:1750000},
+  {n:'Diamond',mn:50,mx:74,da:.25,dc:'25%',pts:50000,bg:'#0d47a1',ic:'💠',acum:2500000},
+  {n:'Elite',mn:75,mx:99,da:.30,dc:'30%',pts:50000,bg:'#4a148c',ic:'👑',acum:3750000},
+  {n:'Legend',mn:100,mx:9999,da:.35,dc:'40%',pts:50000,bg:'#1a1a14',ic:'🏆',acum:5000000}
+];
+var JOURNEY=[
+  {l:'🤝 Referido firmado',p:50000,ic:'🤝',t:'Refiero un propietario'},
+  {l:'🎉 Bono permanencia 1 año',p:25000,ic:'🎉',t:'Cumplo 1 año'},
+  {l:'🎤 Asisto a evento Level',p:10000,ic:'🎤',t:'Asisto a un evento'},
+  {l:'⭐ Referido activo 24 meses',p:50000,ic:'⭐',t:'Mi referido se mantiene'},
+];
+var EARN=[
+  {cat:'Bienvenida',a:'Bono de bienvenida',p:50000,f:'Una vez',n:'Al unirse a Level Club'},
+  {cat:'Referidos',a:'Referido activo 24 meses',p:50000,f:'Repetible',n:'Buena onda Level'},
+  {cat:'Referidos',a:'Referido sube de plan',p:10000,f:'Repetible',n:'Up-selling del referido'},
+  {cat:'Referidos',a:'3 referidos en 30 días',p:50000,f:'Repetible',n:'Bonus velocidad'},
+  {cat:'Referidos',a:'Tu referido refiere a alguien',p:25000,f:'Repetible',n:'Cadena de referidos'},
+  {cat:'Bonus',a:'Sube a Tramo 1 — Associate',p:10000,f:'Una vez',n:''},
+  {cat:'Bonus',a:'Sube a Tramo 2 — Partner',p:25000,f:'Una vez',n:''},
+  {cat:'Bonus',a:'Sube a Tramo 3 — Premium',p:50000,f:'Una vez',n:''},
+  {cat:'Bonus',a:'Sube a Tramo 4 — Platinum',p:75000,f:'Una vez',n:''},
+  {cat:'Bonus',a:'Sube a Tramo 5 — Diamond',p:100000,f:'Una vez',n:''},
+  {cat:'Bonus',a:'Sube a Tramo 6 — Elite',p:150000,f:'Una vez',n:''},
+  {cat:'Bonus',a:'Sube a Tramo 7 — Legend',p:250000,f:'Una vez',n:''},
+  {cat:'Permanencia',a:'1 año continuo con Level',p:25000,f:'Una vez',n:'Hito automático'},
+  {cat:'Permanencia',a:'3 años con Level',p:100000,f:'Una vez',n:''},
+  {cat:'Permanencia',a:'5 años con Level',p:300000,f:'Una vez',n:''},
+  {cat:'Permanencia',a:'7 años con Level',p:500000,f:'Una vez',n:'Lealtad máxima'},
+  {cat:'Engagement',a:'Asistir a evento Level',p:10000,f:'Repetible',n:'Por cada asistencia'},
+  {cat:'Engagement',a:'Encuesta de satisfacción',p:10000,f:'Repetible',n:'Anual'},
+  {cat:'Engagement',a:'Compartir Level en RRSS',p:3000,f:'Repetible',n:'Instagram, LinkedIn'},
+  {cat:'Engagement',a:'Testimonio en video',p:15000,f:'Una vez',n:'Caso de éxito'},
+  {cat:'Engagement',a:'Referir en redes con #LevelClub',p:5000,f:'Repetible',n:'Alcance orgánico'},
+  {cat:'Bonus',a:'Mes de cumpleaños',p:20000,f:'Anual',n:'Automático'},
+  {cat:'Bonus',a:'Sube de plan propio',p:15000,f:'Repetible',n:'Inicial → Asegurado → Full'},
+  {cat:'Bonus',a:'Aniversario Level Club',p:30000,f:'Anual',n:'Fecha de ingreso'},
+  {cat:'Engagement',a:'Aprobar pendientes en la app',p:500,f:'Repetible',n:'Gestión activa de cartera'}
+];
+var SHOP=[
+  {id:'s1',cat:'Servicios',ic:'🔧',t:'Mantención preventiva',d:'Revisión técnica del depto.',p:50000,tier:0},
+  {id:'s2',cat:'Servicios',ic:'📸',t:'Fotografías profesionales',d:'Sesión para relanzar tu depto.',p:60000,tier:0},
+  {id:'s3',cat:'Marcas',ic:'🏪',t:'Gift card Sodimac $50k',d:'Mejoras para tu propiedad.',p:50000,tier:0},
+  {id:'s4',cat:'Experiencias',ic:'🥂',t:'Evento Piso 13',d:'Networking con inversionistas.',p:50000,tier:0},
+  {id:'s5',cat:'Gastronomía',ic:'☕',t:'Gift card cafetería $10k',d:'Cafeterías de especialidad.',p:10000,tier:0},
+  {id:'s6',cat:'Servicios',ic:'📋',t:'Certificado energético',d:'Actualización del certificado.',p:15000,tier:0},
+  {id:'s7',cat:'Gastronomía',ic:'🍽️',t:'Cena para 2 premium',d:'Restaurante de autor en Santiago.',p:80000,tier:1},
+  {id:'s8',cat:'Servicios',ic:'🧹',t:'Limpieza check-out',d:'Limpieza profesional completa.',p:85000,tier:1},
+  {id:'s9',cat:'Auto',ic:'🧼',t:'Lavado premium detailing',d:'Interior + exterior + cera.',p:15000,tier:0},
+  {id:'s10',cat:'Gastronomía',ic:'🍷',t:'Experiencia enológica',d:'Tour + degustación en viña.',p:60000,tier:1},
+  {id:'s11',cat:'Marcas',ic:'🏬',t:'Gift card Falabella $50k',d:'Electro, deco, moda.',p:50000,tier:1},
+  {id:'s12',cat:'Viajes',ic:'✈️',t:'Gift card vuelos $100k',d:'Sky o Latam Airlines.',p:100000,tier:2},
+  {id:'s13',cat:'Comisión',ic:'🎁',t:'1 mes admin. gratis',d:'Comisión mensual condonada.',p:150000,tier:3},
+  {id:'s14',cat:'Servicios',ic:'🏷️',t:'Corretaje gratis',d:'$0 corretaje al próximo arriendo.',p:175000,tier:3},
+  {id:'s15',cat:'Experiencias',ic:'📐',t:'Asesoría de inversión',d:'Sesión privada con asesor.',p:180000,tier:3},
+  {id:'s16',cat:'Servicios',ic:'🎨',t:'Home staging básico',d:'Ambientación entre contratos.',p:120000,tier:2},
+  {id:'s17',cat:'Bienestar',ic:'💆',t:'Día de spa para 2',d:'Relax con masaje y circuito.',p:60000,tier:1},
+  {id:'s18',cat:'Hotelería',ic:'🏔️',t:'2 noches hotel + cena',d:'Hotel boutique zona central.',p:200000,tier:4},
+  {id:'s19',cat:'Viajes',ic:'♨️',t:'Weekend termas para 2',d:'2 noches + acceso termas.',p:120000,tier:2},
+  {id:'s20',cat:'Servicios',ic:'🎬',t:'Video tour profesional',d:'Video HD para tu depto.',p:80000,tier:1},
+  {id:'s21',cat:'Marcas',ic:'📱',t:'Kit smart home',d:'Cerradura + cámara inteligente.',p:90000,tier:2},
+  {id:'s22',cat:'Experiencias',ic:'🎓',t:'Masterclass inversión',d:'Clase privada con expertos.',p:30000,tier:0},
+  {id:'s23',cat:'Comisión',ic:'📉',t:'0,5% menos por 3 meses',d:'Reducción temporal de tasa.',p:250000,tier:4},
+  {id:'s24',cat:'Servicios',ic:'🛠️',t:'Reparación express',d:'Visita de gasfíter/electricista.',p:40000,tier:0},
+  {id:'s25',cat:'Marcas',ic:'🛡️',t:'Seguro hogar 6 meses',d:'HDI o Mapfre con descuento.',p:80000,tier:2},
+  {id:'s26',cat:'Gastronomía',ic:'🥂',t:'Brunch ejecutivo para 4',d:'Brunch premium en Santiago.',p:50000,tier:1},
+  {id:'s27',cat:'Bienestar',ic:'🧘',t:'Mes de gimnasio premium',d:'Acceso full a cadena fitness.',p:40000,tier:1},
+  {id:'s28',cat:'Auto',ic:'🔧',t:'Service vehicular',d:'Mantención completa en taller.',p:100000,tier:2},
+  {id:'s29',cat:'Viajes',ic:'⛷️',t:'Weekend Valle Nevado',d:'2 noches + ski pass para 2.',p:250000,tier:5},
+  {id:'s30',cat:'Viajes',ic:'🌴',t:'Viaje Level Legend',d:'3 noches + vuelo + cena gourmet.',p:500000,tier:7}
+];
+var EURO=[
+  {id:'e1',name:'Studio Ñuñoa',loc:'Ñuñoa · Metro Irarrázaval',ic:'🏢',m2:28,dorm:1,bano:1,price:2890,clp:'$115M',maxPts:300000,tag:'Entrega inmediata'},
+  {id:'e2',name:'2D Providencia',loc:'Providencia · Av. Pocuro',ic:'🏙️',m2:52,dorm:2,bano:2,price:4650,clp:'$185M',maxPts:500000,tag:'Entrega inmediata'},
+  {id:'e3',name:'1D San Miguel',loc:'San Miguel · Gran Avenida',ic:'🏗️',m2:34,dorm:1,bano:1,price:2450,clp:'$98M',maxPts:400000,tag:'preventa'},
+  {id:'e4',name:'2D Estación Central',loc:'Estación Central · USACH',ic:'🏢',m2:45,dorm:2,bano:1,price:3200,clp:'$128M',maxPts:400000,tag:'preventa'},
+  {id:'e5',name:'3D La Florida',loc:'La Florida · Metro Vicuña M.',ic:'🏘️',m2:68,dorm:3,bano:2,price:5400,clp:'$216M',maxPts:600000,tag:'Entrega 2027'},
+  {id:'e6',name:'Studio Centro',loc:'Santiago Centro · Metro U. de Chile',ic:'🏙️',m2:25,dorm:1,bano:1,price:2150,clp:'$86M',maxPts:300000,tag:'preventa'}
+];
+var NOTIFS=[
+  {id:'n1',type:'urgent',ic:'🔧',title:'Aprobar cotización de reparación',desc:'Filtración en baño del depto. Providencia 1234. Cotización de gasfitería: $85.000 (incluye materiales y mano de obra). Proveedor: ServiHogar.',meta:'Providencia 1234 · hace 2 horas',actions:['approve','reject']},
+  {id:'n2',type:'urgent',ic:'📋',title:'El arrendatario no renovará contrato',desc:'El arrendatario de Los Leones 567 notificó que no renovará. Contrato vence el 31/08/2026. Te recomendamos preparar el relanzamiento con anticipación.',meta:'Los Leones 567 · hace 5 horas',actions:['view']},
+  {id:'n3',type:'urgent',ic:'💰',title:'Aprobar precio para volver a arrendar',desc:'El depto. Vicuña Mackenna 890 quedará vacante. Precio sugerido de mercado: $380.000/mes (antes $360.000). ¿Apruebas publicar a este valor?',meta:'Vicuña Mackenna 890 · hace 1 día',actions:['approve','reject']},
+  {id:'n4',type:'urgent',ic:'👤',title:'Aprobar candidato arrendatario',desc:'Juan Pérez postuló al depto. San Diego 1122. Renta verificada: $1.800.000/mes. Evaluación comercial: ✓ aprobada. ¿Autorizas avanzar con el contrato?',meta:'San Diego 1122 · hace 1 día',actions:['approve','reject']},
+  {id:'n5',type:'info',ic:'📈',title:'Se aplicó reajuste al canon de arriendo',desc:'Según contrato, el arriendo de Providencia 1234 se reajustó por IPC (+2,1%). Nuevo valor: $428.820/mes. El reajuste ya fue notificado al arrendatario.',meta:'Providencia 1234 · hace 2 días',actions:['view']},
+  {id:'n6',type:'urgent',ic:'🎨',title:'Aprobar promoción para depto. vacante',desc:'Para acelerar el arriendo de San Diego 1122, sugerimos promoción: 50% off primer mes. Reduce vacancia estimada de 45 a 15 días. ¿Apruebas?',meta:'San Diego 1122 · hace 2 días',actions:['approve','reject']},
+  {id:'n7',type:'info',ic:'💵',title:'Arriendo depositado',desc:'Se depositó el arriendo de Providencia 1234: $420.000. Líquido transferido a tu cuenta: $388.500 (comisión 7,5% aplicada). +$5.000 pts Level.',meta:'Providencia 1234 · hace 3 días',actions:['view']},
+  {id:'n8',type:'urgent',ic:'🛠️',title:'Aprobar mantención preventiva anual',desc:'Mantención anual recomendada para Los Leones 567: revisión eléctrica, gasfitería y pintura de retoque. Cotización: $120.000. Mantiene el valor del activo.',meta:'Los Leones 567 · hace 4 días',actions:['approve','reject']},
+  {id:'n9',type:'info',ic:'📄',title:'Documento tributario disponible',desc:'Tu certificado de rentas (DJ1835) del período 2026 ya está disponible para descarga en la sección Documentos.',meta:'Cartera completa · hace 5 días',actions:['view']},
+  {id:'n10',type:'urgent',ic:'⚖️',title:'Aprobar gestión de cobranza',desc:'El arrendatario de Macul 450 registra atraso de 8 días. ¿Autorizas iniciar gestión de cobranza prejudicial? Costo: $0 (incluido en tu plan).',meta:'Macul 450 · hace 6 días',actions:['approve','reject']}
+];
+
+// ===== HELPERS =====
+function fmt(n){return n.toLocaleString('es-CL');}
+function getTier(pts){for(var i=TIERS.length-1;i>=0;i--){if(pts>=TIERS[i].acum)return i;}return 0;}
+function addHist(txt,val,type){history.unshift({txt:txt,val:val,type:type,time:new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})});if(history.length>40)history.pop();}
+function toast(m,ic){var t=document.getElementById('toast');document.getElementById('tm').textContent=m;document.getElementById('ti').textContent=ic||'⭐';t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2600);}
+function confetti(){var c=['#ff9800','#1d428a','#fff','#ffd54f','#7c3aed'];for(var i=0;i<24;i++){var el=document.createElement('div');el.className='confetti';el.style.cssText='left:'+(15+Math.random()*70)+'%;top:'+(Math.random()*20-10)+'px;background:'+c[i%c.length]+';animation-delay:'+(Math.random()*.35)+'s;animation-duration:'+(.8+Math.random()*.5)+'s;border-radius:'+(Math.random()>.5?'50%':'2px');document.body.appendChild(el);setTimeout(function(){el.remove();},1500);}}
+
+// ===== EARN =====
+function earn(label,pts){var before=getTier(bal);bal+=pts;addHist(label,pts,'earn');var after=getTier(bal);renderAll();toast(label+' +$'+fmt(pts),'⭐');confetti();if(after>before){setTimeout(function(){toast('🎉 ¡Subiste a '+TIERS[after].n+'!','🎉');confetti();},950);}}
+
+// ===== GLOBAL RESET =====
+function resetAll(){bal=0;redeemed=[];history=[];notifState={};shopCat='Todos';renderAll();renderNotif();toast('Todo reiniciado a cero','↺');}
+
+// ===== RENDER FUNCTIONS =====
+function renderJourney(){
+  var w=document.getElementById('journey-actions');w.innerHTML='';
+  JOURNEY.forEach(function(j,i){
+    var b=document.createElement('button');b.className='ja-btn';
+    b.innerHTML='<span class="ja-ic">'+j.ic+'</span><span>'+j.t+'<br><span class="ja-pts">+$'+fmt(j.p)+'</span></span>';
+    b.addEventListener('click',function(){earn(j.l,j.p);});
+    w.appendChild(b);
+  });
+}
+function getTierByUnits(consol){var idx=0;for(var i=TIERS.length-1;i>=0;i--){if(consol>=TIERS[i].mn){idx=i;break;}}return idx;}
+function renderTierPath(){
+  // La progresión se desbloquea por unidades consolidadas (propios + referidos) del simulador
+  var prop=parseInt((document.getElementById('sc-prop')||{}).value||0);
+  var ref=parseInt((document.getElementById('sc-ref')||{}).value||0);
+  var consol=prop+ref;
+  var cur=getTierByUnits(consol);var h='';
+  TIERS.forEach(function(t,i){
+    var state=i<cur?'unlocked':i===cur?'current':'locked';
+    var bl=state==='locked'?' locked':'';
+    h+='<div class="tier-stage '+state+'"><div class="tier-badge'+bl+'" style="background:'+t.bg+'">'+t.ic+'</div>';
+    h+='<div class="tier-info"><div class="tier-name">'+t.n+(state==='current'?' · tu tramo':'')+'</div>';
+    h+='<div class="tier-range">'+t.mn+'–'+(t.mx>999?'100+':t.mx)+' unidades · '+(state==='locked'?'Desbloquea con '+t.mn+' unidades consolidadas':state==='current'?'✓ Tu tramo actual':'✓ Desbloqueado')+'</div>';
+    h+='<div class="tier-benefits"><span class="tier-ben">Dcto. admin '+(t.da*100)+'%</span><span class="tier-ben">Corretaje '+t.dc+'</span>';
+    if(t.pts>0)h+='<span class="tier-ben">$'+fmt(t.pts)+' pts/depto ref.</span>';
+    if(i===0)h+='<span class="tier-ben">🎁 Gift Card $100k 1era vez</span>';
+    h+='</div></div><div class="tier-dcto"><div class="tier-dcto-val">'+(t.da*100)+'%</div><div class="tier-dcto-lbl">descuento</div></div></div>';
+  });
+  document.getElementById('tier-path').innerHTML=h;
+}
+function renderEarn(){
+  var h='<table class="etbl"><thead><tr><th>Categoría</th><th>Acción</th><th>Puntos</th><th>Frecuencia</th><th>Nota</th></tr></thead><tbody>';
+  EARN.forEach(function(e){var cls='b-'+e.cat.toLowerCase();h+='<tr><td><span class="badge '+cls+'">'+e.cat+'</span></td><td>'+e.a+'</td><td class="pts">'+(e.p>0?'$'+fmt(e.p):'')+'</td><td>'+e.f+'</td><td style="font-size:10px;color:var(--g400);text-align:left">'+e.n+'</td></tr>';});
+  h+='</tbody></table>';document.getElementById('earn-tbl').innerHTML=h;
+}
+function renderDcto(){
+  var h='<table class="tbl"><thead><tr><th>Tramo</th><th>Nombre</th><th>Unidades</th><th>Dcto. administración</th><th>Dcto. corretaje</th></tr></thead><tbody>';
+  TIERS.forEach(function(t){h+='<tr><td>'+t.n+'</td><td><strong>'+t.ic+' '+t.n+'</strong></td><td>'+t.mn+'–'+(t.mx>999?'100+':t.mx)+'</td><td class="pct">'+(t.da*100)+'%</td><td class="pct">'+t.dc+'</td></tr>';});
+  h+='</tbody></table>';document.getElementById('dcto-tbl').innerHTML=h;
+}
+var PLANS=[.07,.09,.12],PNAMES=['Inicial 7%','Asegurado 9%','Full 12%'];
+function renderPlanSel(){
+  var w=document.getElementById('plan-sel');w.innerHTML='';
+  PNAMES.forEach(function(n,i){var b=document.createElement('button');b.className='pbtn'+(i===curPlan?' active':'');b.textContent=n;b.addEventListener('click',function(){curPlan=i;renderPlanSel();renderPlan();});w.appendChild(b);});
+}
+function renderPlan(){
+  var r=PLANS[curPlan];
+  var h='<table class="tbl"><thead><tr><th>Tramo</th><th>Nombre</th><th>Unidades</th><th>Dcto.</th><th>Tasa</th><th>Comisión/mes</th><th>Ahorro/mes</th><th>Ahorro/año</th></tr></thead><tbody>';
+  TIERS.forEach(function(t){var tasa=r*(1-t.da);var com=350000*tasa;var ah=350000*r-com;h+='<tr><td>'+t.ic+'</td><td><strong>'+t.n+'</strong></td><td>'+t.mn+'–'+(t.mx>999?'100+':t.mx)+'</td><td class="pct">'+(t.da*100)+'%</td><td>'+(tasa*100).toFixed(1)+'%</td><td class="money">$'+fmt(Math.round(com))+'</td><td>$'+fmt(Math.round(ah))+'</td><td class="pts">$'+fmt(Math.round(ah*12))+'</td></tr>';});
+  h+='</tbody></table>';document.getElementById('plan-tbl').innerHTML=h;
+}
+function renderTierProg(){
+  var idx=getTier(bal);var t=TIERS[idx];var next=TIERS[Math.min(idx+1,7)];var pct=next.acum>0?Math.min(bal/next.acum*100,100):100;
+  document.getElementById('bv').textContent='$'+fmt(bal);
+  var ev=document.getElementById('bv-euro');if(ev)ev.textContent='$'+fmt(bal);
+  document.getElementById('tp').innerHTML='<div class="tp-current"><span class="tp-dot" style="background:'+t.bg+'"></span>'+t.ic+' '+t.n+'</div><div class="tp-track"><div class="tp-fill" style="width:'+pct+'%"></div></div><div class="tp-next">'+(idx<7?'Próximo: '+next.n+' · $'+fmt(next.acum):'🏆 Nivel máximo')+'</div>';
+}
+function renderShop(){
+  var tierIdx=getTier(bal);var cats=['Todos'];SHOP.forEach(function(s){if(cats.indexOf(s.cat)===-1)cats.push(s.cat);});
+  var fw=document.getElementById('sfil');fw.innerHTML='';
+  cats.forEach(function(c){var b=document.createElement('button');b.className='sf'+(shopCat===c?' active':'');b.textContent=c;b.addEventListener('click',function(){shopCat=c;renderShop();});fw.appendChild(b);});
+  var g=document.getElementById('sg');g.innerHTML='';
+  var items=shopCat==='Todos'?SHOP.slice():SHOP.filter(function(s){return s.cat===shopCat;});
+  items.sort(function(a,b){return a.p-b.p;});
+  items.forEach(function(s){
+    var lock=s.tier>tierIdx;var can=bal>=s.p&&!lock;var done=redeemed.indexOf(s.id)!==-1;
+    var pct=lock?0:Math.min(bal/s.p*100,100);var falta=Math.max(s.p-bal,0);
+    var msg=lock?'🔒 Desde '+TIERS[s.tier].n:(can?'¡Disponible!':'Faltan $'+fmt(falta));
+    var d=document.createElement('div');d.className='sc'+(done?' done':((lock||!can)?' locked':''));
+    d.innerHTML='<div class="sc-img">'+s.ic+'</div><div class="sc-body"><div class="sc-cat">'+s.cat+'</div><div class="sc-title">'+s.t+'</div><div class="sc-desc">'+s.d+'</div>'+(done?'':'<div class="sc-prog"><div class="sc-fill" style="width:'+pct+'%"></div></div>')+'<div class="sc-foot"><div><div class="sc-pts">'+(done?'✓ Canjeado':'$'+fmt(s.p))+'</div><div class="sc-sub">'+msg+'</div></div></div></div>';
+    if(can&&!done){var btn=document.createElement('button');btn.className='sc-btn';btn.textContent='Canjear';btn.addEventListener('click',function(){openShopModal(s);});d.querySelector('.sc-foot').appendChild(btn);}
+    else{var btn2=document.createElement('button');btn2.className='sc-btn';btn2.disabled=true;btn2.textContent=done?'✓':'Canjear';d.querySelector('.sc-foot').appendChild(btn2);}
+    g.appendChild(d);
+  });
+}
+function renderHist(){
+  var l=document.getElementById('hist');if(history.length===0){l.innerHTML='<div class="hi-empty">Aún no hay movimientos. Usa el simulador o los botones de demo.</div>';return;}
+  l.innerHTML='';history.forEach(function(h){var d=document.createElement('div');d.className='hi';d.innerHTML='<div class="hi-dot '+h.type+'"></div><div class="hi-txt">'+h.txt+'</div><div class="hi-time">'+h.time+'</div><div class="hi-val '+h.type+'">'+(h.type==='earn'?'+$':'-$')+fmt(h.val)+'</div>';l.appendChild(d);});
+}
+function renderEuro(){
+  var idx=getTier(bal);var g=document.getElementById('euro-grid');g.innerHTML='';
+  EURO.forEach(function(e){
+    var aplica=Math.min(bal,e.maxPts);
+    var d=document.createElement('div');d.className='ep';
+    var tagCls=e.tag==='preventa'?' preventa':'';
+    d.innerHTML='<div class="ep-img">'+e.ic+'<span class="ep-tag'+tagCls+'">'+e.tag+'</span></div>'+
+      '<div class="ep-body"><div class="ep-name">'+e.name+'</div><div class="ep-loc">📍 '+e.loc+'</div>'+
+      '<div class="ep-specs"><span class="ep-spec">📐 '+e.m2+'m²</span><span class="ep-spec">🛏️ '+e.dorm+'D</span><span class="ep-spec">🚿 '+e.bano+'B</span></div>'+
+      '<div class="ep-price-row"><div><div class="ep-price">'+e.clp+'</div><div class="ep-price-uf">UF '+fmt(e.price)+'</div></div></div>'+
+      '<div class="ep-pts-box"><div class="ep-pts-label">descuento con tus puntos</div><div class="ep-pts-row"><div class="ep-pts-disc">−$'+fmt(aplica)+'</div><div class="ep-pts-cost">tope: $'+fmt(e.maxPts)+'</div></div></div></div>';
+    var btn=document.createElement('button');btn.className='ep-btn';
+    if(bal<=0){btn.disabled=true;btn.textContent='Suma puntos para aplicar descuento';}
+    else{btn.textContent='Reservar y aplicar $'+fmt(aplica);btn.addEventListener('click',function(){openEuroModal(e,aplica);});}
+    d.querySelector('.ep-body').appendChild(btn);
+    g.appendChild(d);
+  });
+}
+function renderNotif(){
+  var pend=0,done=0,info=0;
+  NOTIFS.forEach(function(n){var st=notifState[n.id];if(st==='approved'||st==='rejected'||st==='viewed')done++;else if(n.type==='urgent')pend++;else info++;});
+  document.getElementById('notif-summary').innerHTML=
+    '<div class="ns ns-pend"><div class="ns-val">'+pend+'</div><div class="ns-lbl">requieren acción</div></div>'+
+    '<div class="ns ns-info"><div class="ns-val">'+info+'</div><div class="ns-lbl">informativas</div></div>'+
+    '<div class="ns ns-done"><div class="ns-val">'+done+'</div><div class="ns-lbl">gestionadas</div></div>';
+  var l=document.getElementById('notif-list');l.innerHTML='';
+  NOTIFS.forEach(function(n){
+    var st=notifState[n.id];var resolved=(st==='approved'||st==='rejected'||st==='viewed');
+    var d=document.createElement('div');d.className='nt '+(resolved?'done':n.type);
+    var h='<div class="nt-ic">'+n.ic+'</div><div class="nt-body"><div class="nt-title">'+n.title+'</div><div class="nt-desc">'+n.desc+'</div><div class="nt-meta">'+n.meta+'</div>';
+    if(resolved){var lbl=st==='approved'?'✓ Aprobado':st==='rejected'?'✕ Rechazado':'✓ Revisado';h+='<div class="nt-done-badge">'+lbl+'</div>';}
+    h+='</div>';
+    d.innerHTML=h;
+    if(!resolved){
+      var aw=document.createElement('div');aw.className='nt-actions';
+      n.actions.forEach(function(act){
+        var b=document.createElement('button');
+        if(act==='approve'){b.className='nt-btn nt-approve';b.textContent='Aprobar';b.addEventListener('click',function(){notifState[n.id]='approved';earn('✓ Gestión en la app: '+n.title,500);renderNotif();});}
+        else if(act==='reject'){b.className='nt-btn nt-reject';b.textContent='Rechazar';b.addEventListener('click',function(){notifState[n.id]='rejected';renderNotif();toast('Notificación rechazada','✕');});}
+        else{b.className='nt-btn nt-view';b.textContent='Marcar como visto';b.addEventListener('click',function(){notifState[n.id]='viewed';renderNotif();toast('Marcado como visto','✓');});}
+        aw.appendChild(b);
+      });
+      d.querySelector('.nt-body').appendChild(aw);
+    }
+    l.appendChild(d);
+  });
+}
+function renderPhone(){
+  var idx=getTier(bal);var t=TIERS[idx];var next=TIERS[Math.min(idx+1,7)];var pct=next.acum>0?Math.min(bal/next.acum*100,100):100;
+  var pendNotifs=NOTIFS.filter(function(n){return n.type==='urgent'&&!notifState[n.id];}).slice(0,2);
+  var avail=SHOP.filter(function(s){return s.tier<=idx&&bal>=s.p&&redeemed.indexOf(s.id)===-1;}).sort(function(a,b){return b.p-a.p;}).slice(0,3);
+  var h='<div class="app-head"><div class="app-greet">Hola de nuevo 👋</div><div class="app-name-row"><div class="app-uname">Cristobal</div><div class="app-tier-chip">'+t.ic+' '+t.n+'</div></div>';
+  h+='<div class="app-balance"><div class="app-bal-val">$'+fmt(bal)+'</div><div class="app-bal-lbl">puntos disponibles · 1 pt = $1</div></div>';
+  h+='<div class="app-prog"><div class="app-prog-track"><div class="app-prog-fill" style="width:'+pct+'%"></div></div><div class="app-prog-txt">'+(idx<7?'Te faltan $'+fmt(Math.max(next.acum-bal,0))+' para '+next.n:'🏆 Nivel máximo')+'</div></div></div>';
+  h+='<div class="app-section"><div class="app-sec-title">Acciones rápidas</div><div class="app-quick">';
+  h+='<div class="aq" data-pearn="🤝 Referido firmado|50000"><div class="aq-ic">🤝</div><div class="aq-t">Referir propietario</div><div class="aq-s">+$50.000 pts</div></div>';
+  h+='<div class="aq" data-pearn="🎤 Asisto a evento|10000"><div class="aq-ic">🎤</div><div class="aq-t">Eventos Level</div><div class="aq-s">+$10.000 pts</div></div>';
+  h+='</div>';
+  h+='<div class="app-sec-title">Pendientes de tu cartera <span>'+pendNotifs.length+' urgentes</span></div>';
+  if(pendNotifs.length===0){h+='<div style="font-size:11px;color:var(--g400);padding:.5rem 0">Sin pendientes 🎉</div>';}
+  else{pendNotifs.forEach(function(n){h+='<div class="app-notif urgent" data-pnotif="'+n.id+'"><div class="app-notif-ic">'+n.ic+'</div><div class="app-notif-txt"><strong>'+n.title+'</strong><br>'+n.meta+'</div></div>';});}
+  h+='<div class="app-sec-title" style="margin-top:1.25rem">Canjes disponibles para ti</div>';
+  if(avail.length===0){h+='<div style="font-size:11px;color:var(--g400);text-align:center;padding:1rem">Suma más puntos para desbloquear canjes</div>';}
+  else{avail.forEach(function(s){h+='<div class="app-card"><div class="app-card-ic">'+s.ic+'</div><div class="app-card-info"><div class="app-card-t">'+s.t+'</div><div class="app-card-s">'+s.cat+'</div></div><div class="app-card-pts">$'+fmt(s.p)+'</div></div>';});}
+  h+='</div>';
+  h+='<div class="app-nav"><button class="an active"><div class="an-ic">🏠</div><div class="an-lbl">Inicio</div></button><button class="an"><div class="an-ic">🔔</div><div class="an-lbl">Avisos</div></button><button class="an"><div class="an-ic">⭐</div><div class="an-lbl">Puntos</div></button><button class="an"><div class="an-ic">🏗️</div><div class="an-lbl">Euro</div></button></div>';
+  var sc=document.getElementById('phone-screen');sc.innerHTML=h;
+  // attach phone events
+  sc.querySelectorAll('[data-pearn]').forEach(function(el){el.addEventListener('click',function(){var d=el.getAttribute('data-pearn').split('|');earn(d[0],parseInt(d[1]));});});
+  sc.querySelectorAll('[data-pnotif]').forEach(function(el){el.addEventListener('click',function(){var id=el.getAttribute('data-pnotif');notifState[id]='approved';earn('✓ Gestión en la app',500);renderNotif();});});
+}
+
+function renderScen(){
+  var plan=parseFloat(document.getElementById('scen-plan').value);
+  var prop=parseInt(document.getElementById('sc-prop').value)||0;
+  var ref=parseInt(document.getElementById('sc-ref').value)||0;
+  var arr=parseInt(document.getElementById('sc-arr').value)||0;
+  document.getElementById('sc-prop-v').textContent=prop;
+  document.getElementById('sc-ref-v').textContent=ref;
+  document.getElementById('sc-arr-v').textContent='$'+fmt(arr);
+  // Tramo se calcula con propios + referidos
+  var consol=prop+ref;
+  var tIdx=0;for(var i=TIERS.length-1;i>=0;i--){if(consol>=TIERS[i].mn){tIdx=i;break;}}
+  var t=TIERS[tIdx];
+  // Regla 2:1 — dcto sobre máx 2 propios por unidad referida
+  var deptosDcto=Math.min(prop,2*ref);
+  var comFullMes=arr*plan;
+  var comDctoMes=arr*plan*(1-t.da);
+  var ahorroMesUnit=comFullMes-comDctoMes;
+  var ahorroMesTotal=ahorroMesUnit*deptosDcto;
+  var ahorroAnual=ahorroMesTotal*12;
+  var comMensualTotal=deptosDcto*comDctoMes + Math.max(prop-deptosDcto,0)*comFullMes;
+  // Puntos por deptos referidos
+  var ptsRef=ref*t.pts;
+  var ptsBonus=ref>0?50000:0;
+  var ptsTotal=ptsRef+ptsBonus;
+
+  var rh='';
+  rh+='<div class="scr"><div class="scr-lbl">tramo activo</div><div class="scr-val navy" style="font-size:1rem">'+t.ic+' '+t.n+'</div><div class="scr-sub">'+consol+' consolidadas ('+prop+' propias + '+ref+' referidas)</div></div>';
+  rh+='<div class="scr"><div class="scr-lbl">descuento permanente</div><div class="scr-val orange">'+(t.da*100)+'%</div><div class="scr-sub">tasa resultante: '+(plan*(1-t.da)*100).toFixed(1)+'% + IVA</div></div>';
+  rh+='<div class="scr"><div class="scr-lbl">ahorro mensual</div><div class="scr-val navy">$'+fmt(Math.round(ahorroMesTotal))+'</div><div class="scr-sub">sobre '+deptosDcto+' deptos. (regla 2:1)</div></div>';
+  rh+='<div class="scr"><div class="scr-lbl">ahorro anual proyectado</div><div class="scr-val orange">$'+fmt(Math.round(ahorroAnual))+'</div><div class="scr-sub">12 meses de descuento</div></div>';
+  document.getElementById('scen-results').innerHTML=rh;
+
+  document.getElementById('scen-formula').innerHTML='<div class="scf-text">'+(plan*100).toFixed(1)+'% base × (1 − <b>'+(t.da*100)+'%</b>) = <b>'+(plan*(1-t.da)*100).toFixed(1)+'%</b> + IVA · ahorro sobre <b>'+deptosDcto+'</b> deptos × $'+fmt(arr)+'</div><div class="scf-right"><div class="scf-right-lbl">ahorro anual proyectado</div><div class="scf-right-val">$'+fmt(Math.round(ahorroAnual))+'/año</div></div>';
+
+  document.getElementById('scen-pts').innerHTML='<div class="scp-left">Por referir <b>'+ref+' unidades</b> en tramo <b>'+t.n+'</b> ($'+fmt(t.pts)+'/depto)'+(ref>0?' + bono primera vez $50.000':'')+' acumularías:</div><div class="scp-val">$'+fmt(ptsTotal)+' pts</div>';
+  renderTierPath();
+}
+function renderAll(){
+  renderTierPath();renderTierProg();renderShop();renderHist();renderEuro();
+  if(document.getElementById('p-mobile').classList.contains('active'))renderPhone();
+}
+
+// ===== MODALS =====
+var pendingShop=null,pendingEuro=null,pendingEuroPts=0;
+function openShopModal(s){pendingShop=s;pendingEuro=null;document.getElementById('mi').textContent=s.ic;document.getElementById('mti').textContent=s.t;document.getElementById('ms').textContent=s.d;document.getElementById('mp').textContent='-$'+fmt(s.p)+' puntos';document.getElementById('mok').textContent='Confirmar canje';document.getElementById('mbg').classList.add('show');}
+function openEuroModal(e,pts){pendingEuro=e;pendingEuroPts=pts;pendingShop=null;document.getElementById('mi').textContent=e.ic;document.getElementById('mti').textContent='Reservar '+e.name;document.getElementById('ms').textContent='Aplicarás $'+fmt(pts)+' de descuento en el pie. Un ejecutivo Euro te contactará para coordinar la compra.';document.getElementById('mp').textContent='−$'+fmt(pts)+' en puntos';document.getElementById('mok').textContent='Reservar y aplicar';document.getElementById('mbg').classList.add('show');}
+function closeM(){document.getElementById('mbg').classList.remove('show');pendingShop=null;pendingEuro=null;}
+
+// ===== INIT / EVENT BINDING =====
+function init(){
+  // login
+  document.getElementById('login-btn').addEventListener('click',doLogin);
+  document.getElementById('lp').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+  document.getElementById('lu').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+  // tabs
+  document.querySelectorAll('.tab').forEach(function(tab){tab.addEventListener('click',function(){var id=tab.getAttribute('data-tab');document.querySelectorAll('.pg').forEach(function(p){p.classList.remove('active');});document.getElementById('p-'+id).classList.add('active');document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});tab.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});if(id==='mobile')renderPhone();if(id==='notif')renderNotif();if(id==='euro')renderEuro();});});
+  // global reset
+  document.getElementById('reset-global').addEventListener('click',resetAll);
+  document.getElementById('shop-reset').addEventListener('click',resetAll);
+  document.getElementById('euro-reset').addEventListener('click',resetAll);
+  // demo add buttons
+  document.querySelectorAll('[data-add]').forEach(function(b){b.addEventListener('click',function(){var n=parseInt(b.getAttribute('data-add'));bal+=n;addHist('Carga de puntos (demo)',n,'earn');renderAll();toast('+$'+fmt(n)+' puntos','⭐');confetti();});});
+  // modal
+  document.getElementById('mok').addEventListener('click',function(){
+    if(pendingShop){bal-=pendingShop.p;redeemed.push(pendingShop.id);addHist('Canjeado: '+pendingShop.t,pendingShop.p,'spend');var nm=pendingShop.t;closeM();renderAll();toast(nm+' canjeado','🎁');confetti();}
+    else if(pendingEuro){bal-=pendingEuroPts;addHist('Reserva Euro: '+pendingEuro.name,pendingEuroPts,'spend');var nm2=pendingEuro.name;closeM();renderAll();toast('¡'+nm2+' reservado! Un ejecutivo te contactará','🏗️');confetti();}
+  });
+  document.getElementById('mcancel').addEventListener('click',closeM);
+  document.getElementById('mbg').addEventListener('click',function(e){if(e.target===this)closeM();});
+  // scenario sliders
+  ['sc-prop','sc-ref','sc-arr'].forEach(function(id){document.getElementById(id).addEventListener('input',renderScen);});
+  document.getElementById('scen-plan').addEventListener('change',renderScen);
+  renderScen();
+  // initial render
+  renderJourney();renderTierPath();renderEarn();renderDcto();renderPlanSel();renderPlan();renderTierProg();renderShop();renderHist();renderEuro();renderNotif();
+}
+function doLogin(){
+  var u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
+  if(u==='Cristobal'&&p==='LevelClub'){
+    document.getElementById('login').classList.add('out');
+    var a=document.getElementById('app');a.style.display='block';
+    setTimeout(function(){a.classList.add('show');},50);
+    setTimeout(function(){document.getElementById('login').style.display='none';},600);
+  }else{document.getElementById('lerr').textContent='Usuario o contraseña incorrectos';document.getElementById('lp').value='';}
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+</body>
+</html>
